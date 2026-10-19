@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [ISPRAVKA L14] Android IGNORIŠE layout_width / layout_weight / margine na <include> ako nije navedena
+     i layout_height. U staroj verziji je zato prvi shimmer zauzimao cijelu širinu reda, a drugi ispadao
+     van ekrana. Ovdje su uvijek navedena oba atributa, a raspored vodi Guideline na 50%. -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <include
+        android:id="@+id/shimmer_1"
+        layout="@layout/shimmer_book_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        app:layout_constraintEnd_toStartOf="@id/guide_center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/shimmer_2"
+        layout="@layout/shimmer_book_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guide_center"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/shimmer_3"
+        layout="@layout/shimmer_book_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="6dp"
+        app:layout_constraintEnd_toStartOf="@id/guide_center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/shimmer_1" />
+
+    <include
+        android:id="@+id/shimmer_4"
+        layout="@layout/shimmer_book_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guide_center"
+        app:layout_constraintTop_toBottomOf="@id/shimmer_2" />
+</androidx.constraintlayout.widget.ConstraintLayout>

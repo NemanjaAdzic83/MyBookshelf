@@ -1,0 +1,11 @@
+buildscript {
+    repositories { google(); mavenCentral() }
+    dependencies { classpath 'com.android.tools.build:gradle:8.2.0' }
+}
+
+allprojects {
+    repositories { google(); mavenCentral() }   // [ISPRAVKA G2] jitpack.io uklonjen - nijedna biblioteka ga ne koristi
+}
+
+// [ISPRAVKA G2] rootProject.buildDir je zastarjelo (deprecated) u Gradle 8.x
+task clean(type: Delete) { delete rootProject.layout.buildDirectory }

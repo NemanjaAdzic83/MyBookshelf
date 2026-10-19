@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyBookshelf</string>
+
+    <!-- General -->
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear text</string>
+    <string name="retry">Try again</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_library">Library</string>
+    <string name="nav_wishlist">Wishlist</string>
+    <string name="fab_add_desc">Add a book manually</string>
+    <string name="fab_scan_desc">Scan barcode</string>
+
+    <!-- Home -->
+    <string name="home_library_label">Library</string>
+    <string name="home_wishlist_label">Wishlist</string>
+    <string name="book_count_zero">Books: 0</string>
+    <string name="book_count_format">Books: %1$d</string>
+    <string name="empty_library">Your library is empty</string>
+    <string name="empty_library_sub">Tap + or scan a barcode</string>
+
+    <!-- Library / wishlist -->
+    <string name="all_books">All books</string>
+    <string name="filter_all">All</string>
+    <string name="empty_library_books">No books in the library</string>
+    <string name="wishlist_title">Wishlist</string>
+    <string name="empty_wishlist">Your wishlist is empty</string>
+    <string name="empty_wishlist_sub">Add books you would like to get</string>
+    <string name="badge_wishlist">Wishlist</string>
+    <string name="status_library_short">Library</string>
+    <string name="in_library">✅ In library</string>
+    <string name="in_wishlist">📋 On wishlist</string>
+
+    <!-- Search -->
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search by title or author…</string>
+    <string name="search_start_hint">Search your collection</string>
+    <string name="search_no_results">No results for \"%1$s\"</string>
+
+    <!-- Add book -->
+    <string name="add_book_title">Add book</string>
+    <string name="add_book_section_info">BOOK DETAILS</string>
+    <string name="add_book_section_genre">GENRE (optional)</string>
+    <string name="book_title_hint">Book title *</string>
+    <string name="author_first_hint">Author first name</string>
+    <string name="author_last_hint">Author last name *</string>
+    <string name="cover_hint">Tap to add cover</string>
+    <string name="pick_cover">Choose cover</string>
+    <string name="remove_cover">Remove image</string>
+    <string name="add_to_library">Add to library</string>
+    <string name="add_to_wishlist">Add to wishlist</string>
+    <string name="error_title_required">Title is required</string>
+    <string name="error_author_required">Author last name is required</string>
+    <string name="toast_added_library">Added to library!</string>
+    <string name="toast_added_wishlist">Added to wishlist!</string>
+    <string name="toast_exists_library">\"%1$s\" is already in your library!</string>
+    <string name="toast_exists_wishlist">\"%1$s\" is already on your wishlist!</string>
+    <string name="toast_save_error">Could not save.</string>
+    <string name="toast_cover_error">Could not load the image.</string>
+
+    <!-- Book details -->
+    <string name="move_to_library">Bought — move to library</string>
+    <string name="delete_book">Delete book</string>
+    <string name="dialog_move_title">Move to library</string>
+    <string name="dialog_move_message">Move \"%1$s\" to your library?</string>
+    <string name="dialog_move_positive">Move</string>
+    <string name="toast_moved">Moved!</string>
+    <string name="dialog_delete_title">Delete book</string>
+    <string name="dialog_delete_message">Delete \"%1$s\"?</string>
+    <string name="dialog_delete_positive">Delete</string>
+    <string name="toast_deleted">Deleted.</string>
+
+    <!-- Scanner -->
+    <string name="scanner_title">Scan books</string>
+    <string name="scan_hint">📷 Point the camera at a barcode or QR code</string>
+    <string name="scan_formats">Supported: ISBN-13 · ISBN-10 · EAN · QR code</string>
+    <string name="scanning">Searching Google Books…</string>
+    <string name="no_camera_title">Camera not available</string>
+    <string name="no_camera_message">This device has no camera. You can enter the book details manually.</string>
+    <string name="enter_manually">Enter manually</string>
+    <string name="give_up">Cancel</string>
+    <string name="camera_permission_needed">Camera permission is required.</string>
+    <string name="toast_scan_added_wishlist">\"%1$s\" added to wishlist!</string>
+    <string name="toast_scan_added_library">\"%1$s\" added to library!</string>
+
+    <!-- Scanner dialogs -->
+    <string name="dlg_scan_result_title">Scanned book</string>
+    <string name="dlg_not_found_title">Book not found</string>
+    <string name="dlg_not_found_message">The scanned barcode was not found in the book databases.</string>
+    <string name="dlg_error_title">Search error</string>
+    <string name="enter_data_manually">Enter details manually</string>
+    <string name="search_on_web">Search the web</string>
+    <string name="toast_no_browser">No web browser found on this phone.</string>
+    <string name="scan_code_format">Scanned code: %1$s</string>
+    <string name="isbn_format">ISBN: %1$s</string>
+    <string name="publisher_format">%1$s (%2$s)</string>
+    <string name="scan_status_new">📚 Not in your collection yet</string>
+    <string name="scan_status_wishlist">📋 This book is on your wishlist</string>
+    <string name="scan_status_library">✅ This book is in your library</string>
+    <string name="scan_view_in_wishlist">View on wishlist</string>
+    <string name="scan_view_in_library">View in library</string>
+    <string name="scan_view_in_collection">View in collection</string>
+
+    <!-- Edit book -->
+    <string name="edit_book">Edit book</string>
+    <string name="edit_book_title">Edit book</string>
+    <string name="save_changes">Save changes</string>
+    <string name="toast_updated">Changes saved.</string>
+    <string name="toast_book_missing">Book not found.</string>
+</resources>

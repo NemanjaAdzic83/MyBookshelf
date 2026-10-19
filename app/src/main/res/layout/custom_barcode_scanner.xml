@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ovaj layout ZXing ubacuje unutar vlastitog DecoratedBarcodeView-a, zato ostaje <merge>
+     (ConstraintLayout ovdje nije primjenjiv). Promijenjeni su samo imena atributa. -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.journeyapps.barcodescanner.BarcodeView
+        android:id="@+id/zxing_barcode_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- [ISPRAVKA K1] zxing_viewfinder_color i zxing_viewfinder_laser_color NE POSTOJE u biblioteci.
+         AAPT2 zbog nepoznatog atributa prekida build ("attribute ... not found").
+         Ispravni atributi su zxing_viewfinder_mask i zxing_viewfinder_laser. -->
+    <com.journeyapps.barcodescanner.ViewfinderView
+        android:id="@+id/zxing_viewfinder_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:zxing_viewfinder_laser="#FFFFB300"
+        app:zxing_viewfinder_mask="#661A237E" />
+
+    <TextView
+        android:id="@+id/zxing_status_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text=""
+        android:textColor="@android:color/white" />
+</merge>
