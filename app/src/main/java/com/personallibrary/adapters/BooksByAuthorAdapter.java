@@ -81,8 +81,9 @@ public class BooksByAuthorAdapter extends RecyclerView.Adapter<RecyclerView.View
             v.tvGenreBadge.setVisibility(View.GONE);
         }
         v.tvWishlistBadge.setVisibility(book.isInWishlist() ? View.VISIBLE : View.GONE);
+        v.ivReadStamp.setVisibility(book.isRead() ? View.VISIBLE : View.GONE);
 
-        CoverLoader.load(v.ivCover, book.getCoverImagePath());   // [ISPRAVKA L6]
+        CoverLoader.load(v.ivCover, book.getCoverImagePath());
         holder.itemView.setOnClickListener(x -> listener.onBookClick(book));
     }
 

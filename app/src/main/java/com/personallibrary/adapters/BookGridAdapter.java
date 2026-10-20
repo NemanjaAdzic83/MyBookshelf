@@ -1,6 +1,7 @@
 package com.personallibrary.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -37,7 +38,8 @@ public class BookGridAdapter extends RecyclerView.Adapter<BookGridAdapter.ViewHo
         Book b = books.get(position);
         h.binding.tvTitle.setText(b.getTitle());
         h.binding.tvAuthor.setText(b.getFullAuthorName());
-        CoverLoader.load(h.binding.ivCover, b.getCoverImagePath());   // [ISPRAVKA L6]
+        CoverLoader.load(h.binding.ivCover, b.getCoverImagePath());
+        h.binding.ivReadStamp.setVisibility(b.isRead() ? View.VISIBLE : View.GONE);
         h.itemView.setOnClickListener(v -> listener.onBookClick(b));
     }
 

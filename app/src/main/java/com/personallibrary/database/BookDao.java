@@ -55,7 +55,7 @@ public interface BookDao {
 
     // Reverse of moveToLibrary: a book added to the library by mistake goes back to the wishlist
     // date_added is refreshed so it appears at the top of  the wishlist
-    @Query("UPDATE books SET in_wishlist=1, date_added= :timestamp WHERE id = :id")
+    @Query("UPDATE books SET in_wishlist = 1, is_read = 0, date_added= :timestamp WHERE id = :id")
     void moveToWishlist(int id, long timestamp);
 
     @Query("SELECT COUNT(*) FROM books WHERE in_wishlist = 0")
@@ -63,4 +63,7 @@ public interface BookDao {
 
     @Query("SELECT COUNT(*) FROM books WHERE in_wishlist = 1")
     int getWishlistCount();
+
+    @Query("UPDATE books SET is_read = :read WHERE id = :id")
+    void setRead(int id, boolean read);
 }

@@ -36,6 +36,10 @@ public class Book {
     @ColumnInfo(name = "genre")
     private String genre;
 
+    // da li je knjiga procitana ili ne
+    @ColumnInfo(name = "is_read", defaultValue = "0")
+    private boolean read;
+
     public Book() {}
 
     public int getId()                         { return id; }
@@ -54,6 +58,13 @@ public class Book {
     public void setDateAdded(long d)           { dateAdded = d; }
     public String getGenre()                   { return genre; }
     public void setGenre(String g)             { genre = g; }
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
 
     public String getFullAuthorName() {
         if (authorFirstName == null || authorFirstName.isEmpty())

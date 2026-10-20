@@ -197,4 +197,10 @@ public class BookRepository {
     public void saveCover(Uri source, Callback<String> cb) {
         async(() -> CoverStorage.copyToInternal(app, source), cb);
     }
+
+    public void setRead(int id, boolean read, Callback<Boolean> cb){
+        async(() -> {dao.setRead(id,read);
+        return true;
+        }, cb);
+    }
 }

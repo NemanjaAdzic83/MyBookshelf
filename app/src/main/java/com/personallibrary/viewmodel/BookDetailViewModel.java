@@ -25,5 +25,13 @@ public class BookDetailViewModel extends AndroidViewModel {
         if (b == null) return;
         repo.moveToWishlist(b.getId(), ok -> opSuccess.setValue(ok));
     }
-    public void deleteBook()     { Book b = book.getValue(); if (b==null) return; repo.deleteBook(b.getId(), ok -> opSuccess.setValue(ok)); }
+    public void deleteBook()     { Book b = book.getValue(); if (b==null) return; repo.deleteBook(b.getId(),
+            ok -> opSuccess.setValue(ok));
+    }
+
+    public void toggleRead(){
+        Book b = book.getValue();
+        if (b == null) return;
+        repo.setRead(b.getId(), !b.isRead(), ok -> loadBook(b.getId()));
+    }
 }

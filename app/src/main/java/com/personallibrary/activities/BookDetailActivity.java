@@ -20,6 +20,8 @@ import com.personallibrary.models.Book;
 import com.personallibrary.utils.CoverLoader;
 import com.personallibrary.viewmodel.BookDetailViewModel;
 
+import java.util.zip.GZIPOutputStream;
+
 public class BookDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_BOOK_ID = "book_id";
@@ -88,12 +90,17 @@ public class BookDetailActivity extends AppCompatActivity {
             binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.wishlist_color));
             binding.btnMoveToLibrary.setVisibility(View.VISIBLE);
             binding.btnMoveToWishlist.setVisibility(View.GONE);
+            binding.btnMarkRead.setVisibility(View.GONE);
+            binding.ivReadStamp.setVisibility(View.GONE);
         } else {
             binding.tvStatus.setText(R.string.in_library);
             binding.tvStatus.setBackgroundResource(R.drawable.bg_status_library);
             binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.library_color));
             binding.btnMoveToLibrary.setVisibility(View.GONE);
             binding.btnMoveToWishlist.setVisibility(View.VISIBLE);
+            binding.btnMarkRead.setVisibility(View.VISIBLE);
+            binding.btnMarkRead.setText(book.isRead() ? R.string.mark_as_unread : R.string.mark_as_read);
+            binding.ivReadStamp.setVisibility(book.isRead() ? View.VISIBLE : View.GONE);
         }
 
         if (book.hasGenre()) {
@@ -129,6 +136,8 @@ public class BookDetailActivity extends AppCompatActivity {
                         .show()
 
         );
+
+        binding.btnMarkRead.setOnClickListener( v -> viewModel.toggleRead());
 
 
         binding.btnDelete.setOnClickListener(v ->

@@ -23,7 +23,7 @@ import java.util.List;
  * Korisnici koji imaju v2 bazu zadržavaju sve podatke osim
  * kolone rating koja se briše bez gubitka knjiga.
  */
-@Database(entities = {Book.class}, version = 3, exportSchema = false)
+@Database(entities = {Book.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase instance;
@@ -77,6 +77,17 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    /*
+        v3 -> v4 : dodaje "read" zastavicu, postojece knjige su "not read"(DEFAULT 0), tako da nista nije izgubljeno
+        Mjenjamo tabelu, tj dodajemo jos jednu kolonu
+     */
+    static final Migration MIGRATION_3_4 = new Migration(3,4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE books ADD COLUMN is_read INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
     // Earlier versions stored genre names in Serbian (Latin and Cyrillic). Same order as GenreConstants.ALL_GENRES.
     private static final String[] OLD_LATIN_GENRES = {
         "Roman", "Naučna fantastika", "Fantazija", "Misterija / Triler",
@@ -108,7 +119,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             ctx.getApplicationContext(),
                             AppDatabase.class,
                             "personal_library.db")
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3,MIGRATION_3_4)
                             .addCallback(new RoomDatabase.Callback() {
                                 @Override public void onOpen(@NonNull SupportSQLiteDatabase db) {
                                     super.onOpen(db);
