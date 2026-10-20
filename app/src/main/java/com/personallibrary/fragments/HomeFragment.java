@@ -18,11 +18,33 @@ import com.personallibrary.adapters.BookGridAdapter;
 import com.personallibrary.databinding.FragmentHomeBinding;
 import com.personallibrary.viewmodel.HomeViewModel;
 
+import android.net.Uri;
+import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
+import com.personallibrary.utils.BackupManager;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private HomeViewModel viewModel;
     private BookGridAdapter adapter;
+
+     // The system file picker. CreateDocument lets the user choose WHERE to save (Downloads,
+     // Google Drive...), OpenDocument lets them choose the file to restore. Neither needs a
+    // storage permission because the user hands us one specific file.
+    private final ActivityResultLauncher<String> exportLauncher = registerForActivityResult(
+            new ActivityResultContracts.CreateDocument("application/zip"),
+            uri -> { if (uri != null) runExport(uri); });
+
+    private final ActivityResultLauncher<String[]> importLauncher = registerForActivityResult(
+            new ActivityResultContracts.OpenDocument(),
+            uri -> { if (uri != null) runImport(uri); });
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -72,8 +94,22 @@ public class HomeFragment extends Fragment {
         viewModel.getWishlistCount().observe(getViewLifecycleOwner(),
                 c -> binding.tvWishlistCount.setText(String.valueOf(c)));
 
-        // [ISPRAVKA L8] ovdje se podaci više NE učitavaju - onResume() se uvijek poziva odmah poslije
-        // onViewCreated(), pa je ranije svaki upit išao dvaput.
+        binding.btnBackupMenu.setOnClickListener(v -> {
+            PopupMenu menu = new PopupMenu(requireContext(), v);
+            menu.getMenuInflater().inflate(R.menu.menu_backup, menu.getMenu());
+            menu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_export_backup) {
+                    exportLauncher.launch(defaultBackupName());
+                    return true;
+                }
+                if (item.getItemId() == R.id.action_import_backup) {
+                    confirmImport();
+                    return true;
+                }
+                return false;
+            });
+            menu.show();
+        });
     }
 
     @Override
@@ -86,5 +122,45 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;     // obavezno kod Fragmenta: View se uništava, a Fragment živi dalje
+    }
+
+    private String defaultBackupName() {
+        return "MyBookshelf-backup-"
+                + new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date()) + ".zip";
+    }
+
+    private void runExport(Uri uri) {
+        Toast.makeText(requireContext(), R.string.backup_working, Toast.LENGTH_SHORT).show();
+        BackupManager.exportTo(requireContext(), uri, r -> {
+            if (!isAdded()) return;     // the user may have left the screen meanwhile
+            String msg = r.ok
+                    ? getString(R.string.backup_export_ok, r.count)
+                    : getString(R.string.backup_export_fail, r.error);
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void confirmImport() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.import_confirm_title)
+                .setMessage(R.string.import_confirm_message)
+                .setPositiveButton(android.R.string.ok, (d, w) -> importLauncher.launch(new String[]{"*/*"}))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void runImport(Uri uri) {
+        Toast.makeText(requireContext(), R.string.backup_working, Toast.LENGTH_SHORT).show();
+        BackupManager.importFrom(requireContext(), uri, r -> {
+            if (!isAdded()) return;
+            String msg = r.ok
+                    ? getString(R.string.import_done_message, r.count, r.skipped)
+                    : getString(R.string.import_fail, r.error);
+            new AlertDialog.Builder(requireContext())
+                    .setMessage(msg)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+            if (r.ok) viewModel.loadData();     // refresh the counters and the grid
+        });
     }
 }

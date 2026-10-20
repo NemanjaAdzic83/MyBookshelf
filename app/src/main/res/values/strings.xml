@@ -122,4 +122,15 @@
     <string name="mark_as_unread">Mark as unread</string>
     <string name="read_stamp_description">Read</string>
 
+    <string name="backup_menu">Backup</string>
+    <string name="export_backup">Export backup</string>
+    <string name="import_backup">Import backup</string>
+    <string name="backup_working">Please wait…</string>
+    <string name="backup_export_ok">Backup saved (%1$d books)</string>
+    <string name="backup_export_fail">Export failed: %1$s</string>
+    <string name="import_confirm_title">Import backup</string>
+    <string name="import_confirm_message">Books from the backup are added to your current ones. Books with the same title and author are skipped. Nothing is deleted or changed.</string>
+    <string name="import_done_message">Imported %1$d books. Skipped %2$d that were already in the app.</string>
+    <string name="import_fail">Import failed: %1$s</string>
+
 </resources>

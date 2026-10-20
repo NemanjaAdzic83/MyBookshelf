@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_export_backup"
+        android:title="@string/export_backup" />
+    <item
+        android:id="@+id/action_import_backup"
+        android:title="@string/import_backup" />
+</menu>
