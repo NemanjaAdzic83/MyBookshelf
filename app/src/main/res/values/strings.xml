@@ -113,4 +113,8 @@
     <string name="save_changes">Save changes</string>
     <string name="toast_updated">Changes saved.</string>
     <string name="toast_book_missing">Book not found.</string>
+
+    <string name="move_to_wishlist">Move to wishlist</string>
+    <string name="dialog_move_wishlist_title">Move to wishlist</string>
+    <string name="dialog_move_wishlist_message">Move \"%1$s\" back to your wishlist?</string>
 </resources>

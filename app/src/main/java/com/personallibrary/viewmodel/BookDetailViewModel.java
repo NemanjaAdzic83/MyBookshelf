@@ -14,6 +14,16 @@ public class BookDetailViewModel extends AndroidViewModel {
     public LiveData<Book>    getBook()      { return book; }
     public LiveData<Boolean> getOpSuccess() { return opSuccess; }
     public void loadBook(int id) { repo.getBookById(id, b -> book.setValue(b)); }
-    public void moveToLibrary()  { Book b = book.getValue(); if (b==null) return; repo.moveToLibrary(b.getId(), ok -> opSuccess.setValue(ok)); }
+    public void moveToLibrary()  {
+        Book b = book.getValue();
+        if (b==null) return;
+        repo.moveToLibrary(b.getId(), ok -> opSuccess.setValue(ok));
+    }
+
+    public void moveToWishlist(){
+        Book b = book.getValue();
+        if (b == null) return;
+        repo.moveToWishlist(b.getId(), ok -> opSuccess.setValue(ok));
+    }
     public void deleteBook()     { Book b = book.getValue(); if (b==null) return; repo.deleteBook(b.getId(), ok -> opSuccess.setValue(ok)); }
 }

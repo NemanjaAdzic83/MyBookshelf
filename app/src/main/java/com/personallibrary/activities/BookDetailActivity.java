@@ -87,11 +87,13 @@ public class BookDetailActivity extends AppCompatActivity {
             binding.tvStatus.setBackgroundResource(R.drawable.bg_status_wishlist);
             binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.wishlist_color));
             binding.btnMoveToLibrary.setVisibility(View.VISIBLE);
+            binding.btnMoveToWishlist.setVisibility(View.GONE);
         } else {
             binding.tvStatus.setText(R.string.in_library);
             binding.tvStatus.setBackgroundResource(R.drawable.bg_status_library);
             binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.library_color));
             binding.btnMoveToLibrary.setVisibility(View.GONE);
+            binding.btnMoveToWishlist.setVisibility(View.VISIBLE);
         }
 
         if (book.hasGenre()) {
@@ -114,6 +116,20 @@ public class BookDetailActivity extends AppCompatActivity {
                         })
                         .setNegativeButton(R.string.cancel, null)
                         .show());
+
+        binding.btnMoveToWishlist.setOnClickListener( v ->
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.dialog_move_wishlist_title)
+                        .setMessage(getString(R.string.dialog_move_wishlist_message,book.getTitle()))
+                        .setPositiveButton(R.string.dialog_move_positive, (d,w) -> {
+                            Toast.makeText(this, R.string.toast_moved,Toast.LENGTH_SHORT).show();
+                            viewModel.moveToWishlist();
+                        })
+                        .setNegativeButton(R.string.cancel, null)
+                        .show()
+
+        );
+
 
         binding.btnDelete.setOnClickListener(v ->
                 new AlertDialog.Builder(this)

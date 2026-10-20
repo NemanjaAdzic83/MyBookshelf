@@ -184,7 +184,13 @@ public class BookRepository {
     }
 
     public void moveToLibrary(int id, Callback<Boolean> cb) {
-        async(() -> { dao.moveToLibrary(id, System.currentTimeMillis()); return true; }, cb);
+        async(() -> { dao.moveToLibrary(id, System.currentTimeMillis());
+            return true; }, cb);
+    }
+
+    public void moveToWishlist(int id, Callback<Boolean> cb){
+        async(() -> { dao.moveToWishlist(id, System.currentTimeMillis());
+            return true; }, cb);
     }
 
     /** Kopira odabranu sliku u privatni direktorij (ISPRAVKA K4). Rezultat: putanja ili null. */

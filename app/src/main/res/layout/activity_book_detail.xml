@@ -158,6 +158,28 @@
             </androidx.cardview.widget.CardView>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_move_to_wishlist"
+                style="@style/Widget.App.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/move_to_wishlist"
+                android:textColor="@color/wishlist_color"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:cornerRadius="14dp"
+                app:icon="@drawable/ic_wishlist"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/wishlist_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_main"
+                app:strokeColor="@color/wishlist_color"/>
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_move_to_library"
                 android:layout_width="0dp"
                 android:layout_height="54dp"
@@ -174,7 +196,7 @@
                 app:iconPadding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_main" />
+                app:layout_constraintTop_toBottomOf="@id/btn_move_to_wishlist" />
 
             <!-- layout_goneMarginTop: razmak kada je dugme iznad (btn_move_to_library) sakriveno -->
             <com.google.android.material.button.MaterialButton
