@@ -41,7 +41,10 @@ public class HomeFragment extends Fragment {
             i.putExtra(BookDetailActivity.EXTRA_BOOK_ID, book.getId());
             startActivity(i);
         });
-        binding.recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        //binding.recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        int screenWidthDp = getResources().getConfiguration().screenWidthDp;
+        int spanCount = Math.max(2,screenWidthDp / 180);
+        binding.recyclerView.setLayoutManager(new GridLayoutManager(requireContext(),spanCount));
         binding.recyclerView.setAdapter(adapter);
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), loading -> {

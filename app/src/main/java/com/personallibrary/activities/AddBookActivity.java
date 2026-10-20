@@ -165,8 +165,10 @@ public class AddBookActivity extends AppCompatActivity {
         binding.tilTitle.setError(null);
         binding.tilAuthorLast.setError(null);
 
-        String title = txt(binding.etTitle);
-        String lastName = txt(binding.etAuthorLast);
+        // Title: first letter only. Author names: every word.
+        String title     = capitalizeFirst(txt(binding.etTitle));
+        String firstName = capitalizeWords(txt(binding.etAuthorFirst));
+        String lastName  = capitalizeWords(txt(binding.etAuthorLast));
 
         if (TextUtils.isEmpty(title)) {
             binding.tilTitle.setError(getString(R.string.error_title_required));
@@ -179,11 +181,40 @@ public class AddBookActivity extends AppCompatActivity {
             return;
         }
 
-        if (isEditMode()) viewModel.saveEdit(title, txt(binding.etAuthorFirst), lastName);
-        else viewModel.saveBook(title, txt(binding.etAuthorFirst), lastName, toWishlist);
+        if (isEditMode()) viewModel.saveEdit(title, firstName, lastName);
+        else viewModel.saveBook(title, firstName, lastName, toWishlist);
     }
 
     private String txt(EditText et) {
         return et.getText() != null ? et.getText().toString().trim() : "";
+    }
+
+    /**
+     * Upper-cases the first letter of every word (words are separated by a
+     * space, hyphen or apostrophe). The rest of each word is left exactly as
+     * typed, so "McDonald" stays "McDonald" and nothing is force-lowercased.
+     * Used for author names.
+     */
+    private String capitalizeWords(String input) {
+        if (input == null || input.isEmpty()) return "";
+        StringBuilder out = new StringBuilder(input.length());
+        boolean startOfWord = true;
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            out.append(startOfWord ? Character.toUpperCase(c) : c);
+            // The next character starts a new word after a separator.
+            startOfWord = (c == ' ' || c == '-' || c == '\'' || c == '’');
+        }
+        return out.toString();
+    }
+
+    /**
+     * Upper-cases only the very first character, e.g. "prokleta avlija"
+     * becomes "Prokleta avlija". The rest is left exactly as typed.
+     * Used for the book title.
+     */
+    private String capitalizeFirst(String input) {
+        if (input == null || input.isEmpty()) return "";
+        return Character.toUpperCase(input.charAt(0)) + input.substring(1);
     }
 }

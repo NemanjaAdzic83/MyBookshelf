@@ -25,7 +25,8 @@ public final class CoverLoader {
                 .placeholder(R.drawable.ic_book_placeholder)
                 .fallback(R.drawable.ic_book_placeholder)
                 .error(R.drawable.ic_book_placeholder)
-                .centerCrop()
+                //scale whole image down so it fits inside the frame
+                .fitCenter()
                 .into(target);
     }
 }
