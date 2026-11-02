@@ -58,9 +58,12 @@ public class LibraryFragment extends Fragment {
         viewModel.getIsEmpty().observe(getViewLifecycleOwner(), empty -> {
             binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
             binding.recyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
+            boolean filtered = viewModel.getReadFilter().getValue() != LibraryViewModel.ReadFilter.ALL;
+            binding.tvEmptyTitle.setText(filtered ? R.string.empty_filtered_books : R.string.empty_library_books);
         });
 
         viewModel.getGenres().observe(getViewLifecycleOwner(), this::rebuildChips);
+        viewModel.getReadFilter().observe(getViewLifecycleOwner(), this::rebuildReadChips);
     }
 
     /**
@@ -85,6 +88,20 @@ public class LibraryFragment extends Fragment {
             }
         }
         binding.filterScrollView.setVisibility(genres != null && !genres.isEmpty() ? View.VISIBLE : View.GONE);
+    }
+
+    /*
+        Build the ALL / READ / UNREAD chips, the selected one always comes from the ViewModel state
+     */
+    private void rebuildReadChips(LibraryViewModel.ReadFilter current){
+        ChipGroup group = binding.chipGroupRead;
+        group.removeAllViews();
+        group.addView(makeChip(getString(R.string.filter_all), current == LibraryViewModel.ReadFilter.ALL,
+                v -> viewModel.setReadFilter(LibraryViewModel.ReadFilter.ALL)));
+        group.addView(makeChip(getString(R.string.filter_read), current == LibraryViewModel.ReadFilter.READ,
+                v -> viewModel.setReadFilter(LibraryViewModel.ReadFilter.READ)));
+        group.addView(makeChip(getString(R.string.filter_unread), current == LibraryViewModel.ReadFilter.UNREAD,
+                v -> viewModel.setReadFilter(LibraryViewModel.ReadFilter.UNREAD)));
     }
 
     private Chip makeChip(String text, boolean selected, View.OnClickListener onClick) {

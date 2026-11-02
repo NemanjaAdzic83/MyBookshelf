@@ -59,6 +59,9 @@ public class BookRepository {
     public void getBookById(int id, Callback<Book> cb)         { async(() -> dao.getBookById(id), cb); }
     public void getLibraryCount(Callback<Integer> cb)          { async(dao::getLibraryCount, cb); }
     public void getWishlistCount(Callback<Integer> cb)         { async(dao::getWishlistCount, cb); }
+    public void getReadCount(Callback<Integer> cb){
+        async(dao::getReadCount,cb);
+    }
 
     // ---------- sorting ----------
     // SQL ORDER BY compares characters by code point, which misorders letters such as Č, Ć, Š, Ž, Đ

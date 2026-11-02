@@ -66,4 +66,8 @@ public interface BookDao {
 
     @Query("UPDATE books SET is_read = :read WHERE id = :id")
     void setRead(int id, boolean read);
+
+    //Number of library books marked as read (wishlist books are never "read")
+    @Query("SELECT COUNT(*) FROM books WHERE in_wishlist = 0 AND is_read = 1")
+    int getReadCount();
 }

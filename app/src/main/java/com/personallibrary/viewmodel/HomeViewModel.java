@@ -19,6 +19,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> libraryCount = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> wishlistCount = new MutableLiveData<>(0);
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Integer> readCount = new MutableLiveData<>(0);
 
     public HomeViewModel(@NonNull Application app) {
         super(app);
@@ -29,6 +30,9 @@ public class HomeViewModel extends AndroidViewModel {
     public LiveData<Integer> getLibraryCount()    { return libraryCount; }
     public LiveData<Integer> getWishlistCount()   { return wishlistCount; }
     public LiveData<Boolean> getIsLoading()       { return isLoading; }
+    public LiveData<Integer> getReadCount(){
+        return readCount;
+    }
 
     public void loadData() {
         // [ISPRAVKA L9] Shimmer se prikazuje samo pri PRVOM učitavanju. Ranije je pri svakom
@@ -41,5 +45,6 @@ public class HomeViewModel extends AndroidViewModel {
         });
         repo.getLibraryCount(c -> libraryCount.setValue(c));
         repo.getWishlistCount(c -> wishlistCount.setValue(c));
+        repo.getReadCount(c -> readCount.setValue(c));
     }
 }

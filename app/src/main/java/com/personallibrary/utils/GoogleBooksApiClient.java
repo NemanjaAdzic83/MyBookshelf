@@ -8,6 +8,8 @@ import com.personallibrary.models.BookInfo;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,7 +20,7 @@ import okhttp3.Response;
 /**
  * Traži knjigu po ISBN-u.
  *
- * [ISPRAVKA N1] 1) Google Books je primarni izvor. Bez API ključa često vraća HTTP 429
+ *                1) Google Books je primarni izvor. Bez API ključa često vraća HTTP 429
  *                   ("previše zahtjeva"), pa je dodana opcija API_KEY (besplatan ključ).
  *                2) Ako Google ne uspije ili ne nađe knjigu, automatski se pokušava Open Library
  *                   (bez ključa, bez ograničenja za ovakvu upotrebu).
@@ -50,7 +52,7 @@ public class GoogleBooksApiClient {
     private final Handler ui = new Handler(Looper.getMainLooper());
 
     public void fetchBookByIsbn(String isbn, BookInfoCallback cb) {
-        // [ISPRAVKA L18] dozvoljeno i malo 'x'; prazan kod (npr. QR bez cifara) ne šalje besmislen upit
+        // Only digits and X are kept; an empty code (e.g. a QR code without digits) is "not found".
         final String clean = isbn == null ? ""
                 : isbn.replaceAll("[^0-9Xx]", "").toUpperCase(Locale.ROOT);
         if (clean.isEmpty()) { ui.post(cb::onNotFound); return; }
@@ -58,27 +60,42 @@ public class GoogleBooksApiClient {
         exec.execute(() -> {
             BookInfo info = null;
             String error = null;
+            // After a Google error (HTTP 429, no internet) we stop asking Google for this scan:
+            // the next request would fail the same way and only make the user wait longer.
+            boolean googleFailed = false;
 
-            // 1) Google Books
-            try {
-                info = queryGoogle(clean);
-            } catch (IOException e) {
-                error = "Check your internet connection.\n(" + e.getMessage() + ")";
-            } catch (ApiException e) {
-                error = e.getMessage();
-            } catch (Exception e) {
-                Log.e(TAG, "Google greška", e);
-                error = "Unexpected error while searching.";
-            }
-
-            // 2) Rezervni izvor: Open Library (ako Google nije uspio ili nije našao knjigu)
-            if (info == null) {
-                try {
-                    info = queryOpenLibrary(clean);
-                } catch (Exception e) {
-                    Log.w(TAG, "Open Library: " + e.getMessage());
+            // Try the scanned number first, then its ISBN-10 / ISBN-13 twin (if one exists).
+            for (String candidate : candidateIsbns(clean)) {
+                if (!googleFailed) {
+                    try {
+                        info = queryGoogle(candidate);
+                    } catch (IOException e) {
+                        error = "Check your internet connection.\n(" + e.getMessage() + ")";
+                        googleFailed = true;
+                    } catch (ApiException e) {
+                        error = e.getMessage();
+                        googleFailed = true;
+                    } catch (Exception e) {
+                        Log.e(TAG, "Google error", e);
+                        error = "Unexpected error while searching.";
+                        googleFailed = true;
+                    }
                 }
+
+                // Fallback source: Open Library (also used when Google found nothing)
+                if (info == null) {
+                    try {
+                        info = queryOpenLibrary(candidate);
+                    } catch (Exception e) {
+                        Log.w(TAG, "Open Library: " + e.getMessage());
+                    }
+                }
+
+                if (info != null) break;
             }
+
+            // Always report the number the user actually scanned, even if the twin found the book.
+            if (info != null) info.setIsbn(clean);
 
             final BookInfo found = info;
             final String err = error;
@@ -182,6 +199,49 @@ public class GoogleBooksApiClient {
         if (full.contains(",")) { String[] p = full.split(",", 2); return new String[]{p[1].trim(), p[0].trim()}; }
         int sp = full.lastIndexOf(' ');
         return sp > 0 ? new String[]{full.substring(0, sp).trim(), full.substring(sp + 1).trim()} : new String[]{"", full};
+    }
+
+    // ---------------- ISBN-10 <-> ISBN-13 ----------------
+
+    /** The scanned number first, then its twin in the other format (when it exists). */
+    private static List<String> candidateIsbns(String isbn) {
+        List<String> list = new ArrayList<>();
+        list.add(isbn);
+        String twin = alternateForm(isbn);
+        if (twin != null) list.add(twin);
+        return list;
+    }
+
+    /**
+     * ISBN-13 starting with 978  ->  its ISBN-10.   ISBN-10  ->  the matching 978 ISBN-13.
+     * Returns null for anything else (e.g. 979... has no ISBN-10 form).
+     * The check digit is recalculated, never copied.
+     */
+    static String alternateForm(String isbn) {
+        if (isbn.matches("978\\d{10}")) {
+            String core = isbn.substring(3, 12);                 // the 9 "real" digits
+            return core + isbn10CheckDigit(core);
+        }
+        if (isbn.matches("\\d{9}[0-9X]")) {
+            String core = "978" + isbn.substring(0, 9);
+            return core + isbn13CheckDigit(core);
+        }
+        return null;
+    }
+
+    /** ISBN-10: weights 10..2 over 9 digits, check digit makes the sum divisible by 11 ("X" = 10). */
+    private static char isbn10CheckDigit(String nineDigits) {
+        int sum = 0;
+        for (int i = 0; i < 9; i++) sum += (nineDigits.charAt(i) - '0') * (10 - i);
+        int check = (11 - sum % 11) % 11;
+        return check == 10 ? 'X' : (char) ('0' + check);
+    }
+
+    /** ISBN-13: weights 1,3,1,3... over 12 digits, check digit makes the sum divisible by 10. */
+    private static char isbn13CheckDigit(String twelveDigits) {
+        int sum = 0;
+        for (int i = 0; i < 12; i++) sum += (twelveDigits.charAt(i) - '0') * (i % 2 == 0 ? 1 : 3);
+        return (char) ('0' + (10 - sum % 10) % 10);
     }
 
     public void shutdown() { exec.shutdown(); }

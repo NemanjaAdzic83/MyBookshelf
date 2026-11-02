@@ -10,15 +10,24 @@ import androidx.lifecycle.MutableLiveData;
 import com.personallibrary.models.Book;
 import com.personallibrary.repository.BookRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LibraryViewModel extends AndroidViewModel {
+
+    // second filter , combined with the genre filter
+    public enum ReadFilter{
+        ALL,
+        READ,
+        UNREAD
+    }
 
     private final BookRepository repo;
     private final MutableLiveData<List<Book>> books = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(false);
     private final MutableLiveData<List<String>> genres = new MutableLiveData<>();
     private final MutableLiveData<String> activeGenre = new MutableLiveData<>("");
+    private final MutableLiveData<ReadFilter> readFilter = new MutableLiveData<>(ReadFilter.ALL);
 
     public LibraryViewModel(@NonNull Application app) {
         super(app);
@@ -29,6 +38,9 @@ public class LibraryViewModel extends AndroidViewModel {
     public LiveData<Boolean> getIsEmpty()       { return isEmpty; }
     public LiveData<List<String>> getGenres()   { return genres; }
     public LiveData<String> getActiveGenre()    { return activeGenre; }
+    public LiveData<ReadFilter> getReadFilter(){
+        return readFilter;
+    }
 
     public void loadBooks() {
         String genre = activeGenre.getValue();
@@ -37,7 +49,7 @@ public class LibraryViewModel extends AndroidViewModel {
 
         repo.getAllGenres(list -> {
             genres.setValue(list);
-            // [ISPRAVKA L2] Ako je aktivni žanr nestao (obrisana posljednja knjiga tog žanra),
+            // Ako je aktivni žanr nestao (obrisana posljednja knjiga tog žanra),
             // vrati filter na "Sve" umjesto da korisnik gleda praznu listu.
             String active = activeGenre.getValue();
             if (active != null && !active.isEmpty() && !list.contains(active)) {
@@ -48,10 +60,19 @@ public class LibraryViewModel extends AndroidViewModel {
     }
 
     private void publishBooks(List<Book> list) {
-        books.setValue(list);
-        isEmpty.setValue(list.isEmpty());
+        ReadFilter f = readFilter.getValue();
+        List<Book> out = new ArrayList<>();
+        for (Book b : list){
+            if (f == null || f == ReadFilter.ALL || (f == ReadFilter.READ) == b.isRead()) out.add(b);
+        }
+        books.setValue(out);
+        isEmpty.setValue(out.isEmpty());
     }
 
     public void filterByGenre(String genre) { activeGenre.setValue(genre); loadBooks(); }
     public void clearFilter()               { activeGenre.setValue(""); loadBooks(); }
+    public void setReadFilter(ReadFilter f){
+        readFilter.setValue(f);
+        loadBooks();
+    }
 }

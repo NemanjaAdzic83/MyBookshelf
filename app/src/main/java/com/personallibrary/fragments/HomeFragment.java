@@ -89,8 +89,9 @@ public class HomeFragment extends Fragment {
 
         viewModel.getLibraryCount().observe(getViewLifecycleOwner(), c -> {
             binding.tvLibraryCount.setText(String.valueOf(c));
-            binding.tvBookCount.setText(getString(R.string.book_count_format, c));
+           updateSubtitle();
         });
+        viewModel.getReadCount().observe(getViewLifecycleOwner(), c ->  updateSubtitle());
         viewModel.getWishlistCount().observe(getViewLifecycleOwner(),
                 c -> binding.tvWishlistCount.setText(String.valueOf(c)));
 
@@ -163,4 +164,12 @@ public class HomeFragment extends Fragment {
             if (r.ok) viewModel.loadData();     // refresh the counters and the grid
         });
     }
+
+    public void  updateSubtitle(){
+        Integer total = viewModel.getLibraryCount().getValue();
+        Integer read = viewModel.getReadCount().getValue();
+        binding.tvBookCount.setText(getString(R.string.book_count_read_format,
+                total == null ? 0 : total, read == null ? 0 : read));
+    }
+
 }
