@@ -38,7 +38,7 @@ public class BookGridAdapter extends RecyclerView.Adapter<BookGridAdapter.ViewHo
         Book b = books.get(position);
         h.binding.tvTitle.setText(b.getTitle());
         h.binding.tvAuthor.setText(b.getFullAuthorName());
-        CoverLoader.load(h.binding.ivCover, b.getCoverImagePath());
+        CoverLoader.load(h.binding.ivCover, b.getCoverImagePath(), b.getTitle());
         h.binding.ivReadStamp.setVisibility(b.isRead() ? View.VISIBLE : View.GONE);
         h.itemView.setOnClickListener(v -> listener.onBookClick(b));
     }

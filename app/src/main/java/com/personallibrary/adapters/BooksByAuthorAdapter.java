@@ -83,7 +83,7 @@ public class BooksByAuthorAdapter extends RecyclerView.Adapter<RecyclerView.View
         v.tvWishlistBadge.setVisibility(book.isInWishlist() ? View.VISIBLE : View.GONE);
         v.ivReadStamp.setVisibility(book.isRead() ? View.VISIBLE : View.GONE);
 
-        CoverLoader.load(v.ivCover, book.getCoverImagePath());
+        CoverLoader.load(v.ivCover, book.getCoverImagePath(), book.getTitle());
         holder.itemView.setOnClickListener(x -> listener.onBookClick(book));
     }
 

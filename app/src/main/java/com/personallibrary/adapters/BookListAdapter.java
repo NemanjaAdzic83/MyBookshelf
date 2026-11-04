@@ -51,7 +51,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
         v.tvStatus.setTextColor(ContextCompat.getColor(h.itemView.getContext(),
                 wish ? R.color.wishlist_color : R.color.library_color));
 
-        CoverLoader.load(v.ivCover, b.getCoverImagePath());   // [ISPRAVKA L6]
+        CoverLoader.load(v.ivCover, b.getCoverImagePath(), b.getTitle());
         h.itemView.setOnClickListener(x -> listener.onBookClick(b));
     }
 

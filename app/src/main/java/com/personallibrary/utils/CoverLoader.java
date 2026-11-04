@@ -1,5 +1,6 @@
 package com.personallibrary.utils;
 
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -27,6 +28,43 @@ public final class CoverLoader {
                 .error(R.drawable.ic_book_placeholder)
                 //scale whole image down so it fits inside the frame
                 .fitCenter()
+                .into(target);
+    }
+
+    // add: import android.graphics.drawable.Drawable;
+
+    /**
+     * Same as load(target, path), but books without a picture (or whose picture fails to load)
+     * get a generated cover with the title instead of the grey placeholder icon.
+     * A new CoverDrawable is made for every call because a Drawable must not be shared
+     * between ImageViews.
+     */
+    public static void load(ImageView target, String path, String title) {
+        String model = (path == null || path.isEmpty()) ? null : path;
+        Drawable generated = new CoverDrawable(title, target.getResources().getDisplayMetrics().density);
+        Glide.with(target)
+                .load(model)
+                .placeholder(generated)    // shown while loading
+                .fallback(generated)       // shown when there is no path at all
+                .error(generated)          // shown when the picture cannot be loaded
+                .fitCenter()              // use the same scale type as in your old load() method
+                .into(target);
+    }
+
+    /**
+     * For large background areas (e.g. behind the cover on the detail screen): same colour as the
+     * generated cover of this book, but without the title text.
+     */
+    public static void loadBackground(ImageView target, String path, String title) {
+        String model = (path == null || path.isEmpty()) ? null : path;
+        Drawable generated = new CoverDrawable(title,
+                target.getResources().getDisplayMetrics().density, false);
+        Glide.with(target)
+                .load(model)
+                .placeholder(generated)
+                .fallback(generated)
+                .error(generated)
+                .centerCrop()
                 .into(target);
     }
 }

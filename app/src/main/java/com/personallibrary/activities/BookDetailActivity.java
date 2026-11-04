@@ -110,8 +110,8 @@ public class BookDetailActivity extends AppCompatActivity {
             binding.tvGenreBadge.setVisibility(View.GONE);
         }
 
-        CoverLoader.load(binding.ivCover, book.getCoverImagePath());
-        CoverLoader.load(binding.ivCoverBg, book.getCoverImagePath());
+        CoverLoader.load(binding.ivCover, book.getCoverImagePath(), book.getTitle());
+        CoverLoader.loadBackground(binding.ivCoverBg, book.getCoverImagePath(), book.getTitle());
 
         binding.btnMoveToLibrary.setOnClickListener(v ->
                 new AlertDialog.Builder(this)
