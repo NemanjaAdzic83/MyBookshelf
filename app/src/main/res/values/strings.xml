@@ -138,4 +138,15 @@
     <string name="empty_filtered_books">No books match this filter</string>
     <string name="book_count_read_format">Books: %1$d · Read: %2$d</string>
 
+    <string name="home_search_hint">Search titles, authors…</string>
+    <string name="home_scan_description">Scan barcode</string>
+    <string name="stat_books_in_library">books in library</string>
+    <string name="stat_read_label">read</string>
+    <string name="stat_read_format">%1$d read</string>
+    <string name="percent_format">%1$d%%</string>
+    <string name="stat_on_wishlist">on wishlist</string>
+    <string name="home_recent_title">Recently added</string>
+    <string name="home_see_all">All</string>
+    <string name="badge_read">Read</string>
+
 </resources>

@@ -1,80 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="6dp"
-    android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/surface"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp">
+    android:layout_margin="6dp">
 
-    <!-- Prije: CardView > LinearLayout > FrameLayout + LinearLayout (dubina 4). Sada: CardView > ConstraintLayout (dubina 3). -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!-- Cover keeps a book-like 2:3 shape. The card only provides rounded corners. -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cover_card"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="2dp"
+        app:layout_constraintDimensionRatio="2:3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/iv_cover"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:importantForAccessibility="no"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_book_placeholder"
-            app:layout_constraintDimensionRatio="2:3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:src="@drawable/ic_book_placeholder" />
 
-        <ImageView
-            android:id="@+id/iv_read_stamp"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_margin="8dp"
-            android:contentDescription="@string/read_stamp_description"
-            android:src="@drawable/ic_read_stamp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/iv_cover"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_cover"/>
-
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:background="@drawable/bg_cover_bottom_fade"
-            app:layout_constraintBottom_toBottomOf="@id/iv_cover"
-            app:layout_constraintEnd_toEndOf="@id/iv_cover"
-            app:layout_constraintStart_toStartOf="@id/iv_cover" />
-
+        <!-- "Read" pill in the bottom-right corner; hidden unless the book is read -->
         <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="0dp"
+            android:id="@+id/tv_read_badge"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="12dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@color/text_primary"
-            android:textSize="17sp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_read_pill"
+            android:drawablePadding="3dp"
+            android:drawableStart="@drawable/ic_check"
+            android:drawableTint="@color/white"
+            android:paddingStart="6dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="3dp"
+            android:text="@string/badge_read"
+            android:textColor="@color/white"
+            android:textSize="10sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_cover" />
+            android:visibility="gone" />
+    </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/tv_author"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="12dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="@color/text_secondary"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/tv_title"
-            app:layout_constraintStart_toStartOf="@id/tv_title"
-            app:layout_constraintTop_toBottomOf="@id/tv_title" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cover_card" />
+
+    <TextView
+        android:id="@+id/tv_author"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_secondary"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+</androidx.constraintlayout.widget.ConstraintLayout>

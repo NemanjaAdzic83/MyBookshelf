@@ -3,6 +3,7 @@ package com.personallibrary.activities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -42,6 +43,18 @@ public class MainActivity extends AppCompatActivity {
 
         binding.fabAdd.setOnClickListener(v -> startActivity(new Intent(this, AddBookActivity.class)));
         binding.fabScan.setOnClickListener(v -> startActivity(new Intent(this, BarcodeScannerActivity.class)));
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (binding.bottomNavigation.getSelectedItemId() != R.id.nav_home){
+                    binding.bottomNavigation.setSelectedItemId(R.id.nav_home);
+                }else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
     }
 
     // [ISPRAVKA L7] UKLONJEN onResume() koji je radio detach().attach() trenutnog fragmenta.

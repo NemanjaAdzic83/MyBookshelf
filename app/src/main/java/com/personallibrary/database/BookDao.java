@@ -23,7 +23,8 @@ public interface BookDao {
     @Delete
     void deleteBook(Book book);
 
-    @Query("SELECT * FROM books WHERE in_wishlist = 0 ORDER BY date_added DESC")
+    // The home page shows only the latest books, "ALL" opens the full library
+    @Query("SELECT * FROM books WHERE in_wishlist = 0 ORDER BY date_added DESC LIMIT 12")
     List<Book> getRecentLibraryBooks();
 
     @Query("SELECT * FROM books WHERE in_wishlist = 0 ORDER BY author_last_name ASC, author_first_name ASC")
@@ -70,4 +71,6 @@ public interface BookDao {
     //Number of library books marked as read (wishlist books are never "read")
     @Query("SELECT COUNT(*) FROM books WHERE in_wishlist = 0 AND is_read = 1")
     int getReadCount();
+
+
 }

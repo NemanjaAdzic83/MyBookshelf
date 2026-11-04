@@ -34,7 +34,7 @@ public final class CoverDrawable extends Drawable {
     private static final int TEXT_COLOR = 0xFFFFF4E0;
 
     // Below this width (in dp) the cover is just a thumbnail and the text would be unreadable.
-    private static final float MIN_WIDTH_FOR_TEXT_DP = 100f;
+    private static final float MIN_WIDTH_FOR_TEXT_DP = 80f;
 
     private final String title;
     private final float density;

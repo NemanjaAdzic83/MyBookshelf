@@ -24,4 +24,13 @@
     <color name="shimmer_base">#E8EAF6</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
+
+    <!-- Home dashboard -->
+    <color name="stat_ring_track">#33000000</color>
+    <color name="stat_chip_bg">#FFF3C4</color>
+    <color name="wish_card_bg">#FFD9E0</color>
+    <color name="wish_card_tile">#A33A5B</color>
+    <color name="wish_card_text">#4A0E22</color>
+    <color name="header_search_bg">#26FFFFFF</color>
+    <color name="header_search_hint">#B3FFFFFF</color>
 </resources>

@@ -12,8 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.personallibrary.R;
+import com.personallibrary.activities.BarcodeScannerActivity;
 import com.personallibrary.activities.BookDetailActivity;
+import com.personallibrary.activities.SearchActivity;
 import com.personallibrary.adapters.BookGridAdapter;
 import com.personallibrary.databinding.FragmentHomeBinding;
 import com.personallibrary.viewmodel.HomeViewModel;
@@ -65,7 +68,7 @@ public class HomeFragment extends Fragment {
         });
         //binding.recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         int screenWidthDp = getResources().getConfiguration().screenWidthDp;
-        int spanCount = Math.max(2,screenWidthDp / 180);
+        int spanCount = Math.max(3,screenWidthDp / 130);
         binding.recyclerView.setLayoutManager(new GridLayoutManager(requireContext(),spanCount));
         binding.recyclerView.setAdapter(adapter);
 
@@ -87,11 +90,8 @@ public class HomeFragment extends Fragment {
             binding.recyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
         });
 
-        viewModel.getLibraryCount().observe(getViewLifecycleOwner(), c -> {
-            binding.tvLibraryCount.setText(String.valueOf(c));
-           updateSubtitle();
-        });
-        viewModel.getReadCount().observe(getViewLifecycleOwner(), c ->  updateSubtitle());
+        viewModel.getLibraryCount().observe(getViewLifecycleOwner(), c -> updateStats());
+        viewModel.getReadCount().observe(getViewLifecycleOwner(), c ->  updateStats());
         viewModel.getWishlistCount().observe(getViewLifecycleOwner(),
                 c -> binding.tvWishlistCount.setText(String.valueOf(c)));
 
@@ -111,6 +111,13 @@ public class HomeFragment extends Fragment {
             });
             menu.show();
         });
+
+        binding.searchBar.setOnClickListener( v ->
+                startActivity(new Intent(requireContext(), SearchActivity.class)));
+        binding.btnScan.setOnClickListener( v ->
+                startActivity(new Intent(requireContext(), BarcodeScannerActivity.class)));
+        binding.cardWishlist.setOnClickListener( v -> selectTab(R.id.nav_wishlist));
+        binding.tvSeeAll.setOnClickListener( v -> selectTab(R.id.nav_library));
     }
 
     @Override
@@ -165,11 +172,24 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void  updateSubtitle(){
-        Integer total = viewModel.getLibraryCount().getValue();
-        Integer read = viewModel.getReadCount().getValue();
-        binding.tvBookCount.setText(getString(R.string.book_count_read_format,
-                total == null ? 0 : total, read == null ? 0 : read));
+    /** Fills the yellow card: total, read count, percentage and the ring. */
+    private void updateStats() {
+        Integer t = viewModel.getLibraryCount().getValue();
+        Integer r = viewModel.getReadCount().getValue();
+        int total = t == null ? 0 : t;
+        int read = r == null ? 0 : r;
+        int percent = total == 0 ? 0 : Math.round(read * 100f / total);
+
+        binding.tvLibraryCount.setText(String.valueOf(total));
+        binding.tvReadChip.setText(getString(R.string.stat_read_format, read));
+        binding.tvReadPercent.setText(getString(R.string.percent_format, percent));
+        binding.progressRead.setProgressCompat(percent, true);
+    }
+
+    /** Switches the bottom navigation to another tab (same as tapping it). */
+    private void selectTab(int itemId) {
+        BottomNavigationView nav = requireActivity().findViewById(R.id.bottom_navigation);
+        if (nav != null) nav.setSelectedItemId(itemId);
     }
 
 }
