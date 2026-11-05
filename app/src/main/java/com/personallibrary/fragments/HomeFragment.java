@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import com.personallibrary.R;
 import com.personallibrary.activities.BarcodeScannerActivity;
 import com.personallibrary.activities.BookDetailActivity;
@@ -28,6 +28,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import com.personallibrary.utils.BackupManager;
+import com.personallibrary.views.PillNavigationView;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -188,7 +190,7 @@ public class HomeFragment extends Fragment {
 
     /** Switches the bottom navigation to another tab (same as tapping it). */
     private void selectTab(int itemId) {
-        BottomNavigationView nav = requireActivity().findViewById(R.id.bottom_navigation);
+        PillNavigationView nav = requireActivity().findViewById(R.id.bottom_navigation);
         if (nav != null) nav.setSelectedItemId(itemId);
     }
 

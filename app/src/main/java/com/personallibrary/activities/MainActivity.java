@@ -25,21 +25,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) load(new HomeFragment());
 
-        binding.bottomNavigation.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.nav_search) {
-                startActivity(new Intent(this, SearchActivity.class));
-                return false;    // [ISPRAVKA L19] kartica se ne označava, pa nije potreban post(setSelectedItemId)
-            }
-            if (id == R.id.nav_home)     { load(new HomeFragment());     return true; }
-            if (id == R.id.nav_library)  { load(new LibraryFragment());  return true; }
-            if (id == R.id.nav_wishlist) { load(new WishlistFragment()); return true; }
-            return false;
+        binding.bottomNavigation.setMenu(R.menu.bottom_nav_menu);
+        binding.bottomNavigation.setOnItemSelectedListener(id -> {
+            if (id == R.id.nav_home)          load(new HomeFragment());
+            else if (id == R.id.nav_library)  load(new LibraryFragment());
+            else if (id == R.id.nav_wishlist) load(new WishlistFragment());
         });
-
-        // [ISPRAVKA L19] ponovni dodir na već izabranu karticu ne pravi novi fragment
-        binding.bottomNavigation.setOnItemReselectedListener(item -> { });
 
         binding.fabAdd.setOnClickListener(v -> startActivity(new Intent(this, AddBookActivity.class)));
         binding.fabScan.setOnClickListener(v -> startActivity(new Intent(this, BarcodeScannerActivity.class)));
