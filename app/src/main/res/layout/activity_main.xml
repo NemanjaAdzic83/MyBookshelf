@@ -48,19 +48,5 @@
         app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Fab"
         app:tint="@color/on_accent" />
 
-    <!-- Temporary: removed in step 3, when every screen gets a barcode icon in its header. -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_scan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/fab_scan_desc"
-        android:src="@drawable/ic_qr_scan"
-        app:backgroundTint="@color/primary_variant"
-        app:elevation="6dp"
-        app:fabSize="mini"
-        app:layout_constraintBottom_toTopOf="@id/fab_add"
-        app:layout_constraintEnd_toEndOf="@id/fab_add"
-        app:layout_constraintStart_toStartOf="@id/fab_add"
-        app:tint="@color/white" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

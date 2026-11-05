@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.personallibrary.R;
+import com.personallibrary.activities.BarcodeScannerActivity;
 import com.personallibrary.activities.BookDetailActivity;
+import com.personallibrary.activities.SearchActivity;
 import com.personallibrary.adapters.BooksByAuthorAdapter;
 import com.personallibrary.databinding.FragmentLibraryBinding;
 import com.personallibrary.viewmodel.LibraryViewModel;
@@ -64,6 +66,11 @@ public class LibraryFragment extends Fragment {
 
         viewModel.getGenres().observe(getViewLifecycleOwner(), this::rebuildChips);
         viewModel.getReadFilter().observe(getViewLifecycleOwner(), this::rebuildReadChips);
+
+        binding.searchBar.getRoot().setOnClickListener( v ->
+                startActivity(new Intent(requireContext(), SearchActivity.class)));
+        binding.searchBar.btnScan.setOnClickListener( v ->
+                startActivity(new Intent(requireContext(), BarcodeScannerActivity.class)));
     }
 
     /**

@@ -10,11 +10,11 @@
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_toolbar_gradient"
+        android:background="@drawable/bg_home_header"
         android:paddingStart="20dp"
         android:paddingTop="16dp"
         android:paddingEnd="20dp"
-        android:paddingBottom="12dp"
+        android:paddingBottom="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -49,6 +49,17 @@
             app:layout_constraintTop_toTopOf="@id/tv_title"
             tools:ignore="HardcodedText" />
 
+        <!-- Traka za pretragu + ikona barkoda (ista kao na Home) -->
+        <include
+            android:id="@+id/search_bar"
+            layout="@layout/view_search_bar"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
         <HorizontalScrollView
             android:id="@+id/filter_scroll_view"
             android:layout_width="0dp"
@@ -58,9 +69,8 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_title">
+            app:layout_constraintTop_toBottomOf="@id/search_bar">
 
-            <!-- singleLine + singleSelection + selectionRequired: chipovi su u jednom redu i uvijek je tačno jedan označen -->
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_filter"
                 android:layout_width="wrap_content"
@@ -69,8 +79,6 @@
                 app:selectionRequired="true"
                 app:singleLine="true"
                 app:singleSelection="true" />
-
-
         </HorizontalScrollView>
 
         <com.google.android.material.chip.ChipGroup
@@ -85,8 +93,6 @@
             app:selectionRequired="true"
             app:singleLine="true"
             app:singleSelection="true" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
