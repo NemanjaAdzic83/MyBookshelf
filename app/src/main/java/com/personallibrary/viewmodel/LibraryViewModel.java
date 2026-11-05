@@ -10,8 +10,11 @@ import androidx.lifecycle.MutableLiveData;
 import com.personallibrary.models.Book;
 import com.personallibrary.repository.BookRepository;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class LibraryViewModel extends AndroidViewModel {
 
@@ -22,12 +25,22 @@ public class LibraryViewModel extends AndroidViewModel {
         UNREAD
     }
 
+    public enum SortOrder{
+        AUTHOR,
+        TITLE,
+        NEWEST,
+        OLDEST
+    }
+
+    private static final Collator COLLATOR = Collator.getInstance(new Locale("sr"));
+
     private final BookRepository repo;
     private final MutableLiveData<List<Book>> books = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(false);
     private final MutableLiveData<List<String>> genres = new MutableLiveData<>();
     private final MutableLiveData<String> activeGenre = new MutableLiveData<>("");
     private final MutableLiveData<ReadFilter> readFilter = new MutableLiveData<>(ReadFilter.ALL);
+    private final MutableLiveData<SortOrder> sortOrder = new MutableLiveData<>(SortOrder.AUTHOR);
 
     public LibraryViewModel(@NonNull Application app) {
         super(app);
@@ -40,6 +53,9 @@ public class LibraryViewModel extends AndroidViewModel {
     public LiveData<String> getActiveGenre()    { return activeGenre; }
     public LiveData<ReadFilter> getReadFilter(){
         return readFilter;
+    }
+    public LiveData<SortOrder> getSortOrder(){
+        return sortOrder;
     }
 
     public void loadBooks() {
@@ -65,14 +81,32 @@ public class LibraryViewModel extends AndroidViewModel {
         for (Book b : list){
             if (f == null || f == ReadFilter.ALL || (f == ReadFilter.READ) == b.isRead()) out.add(b);
         }
+
+        // The list arrives sorted by author; other orders are applied here
+        SortOrder s = sortOrder.getValue();
+        if (s == SortOrder.TITLE) {
+            Collections.sort(out, (a, b) -> COLLATOR.compare(nz(a.getTitle()), nz(b.getTitle())));
+        } else if (s == SortOrder.NEWEST) {
+            Collections.sort(out, (a, b) -> Long.compare(b.getDateAdded(), a.getDateAdded()));
+        } else if (s == SortOrder.OLDEST) {
+            Collections.sort(out, (a, b) -> Long.compare(a.getDateAdded(), b.getDateAdded()));
+        }
+
         books.setValue(out);
         isEmpty.setValue(out.isEmpty());
     }
+
+    private static String nz(String s) { return s == null ? "" : s; }
 
     public void filterByGenre(String genre) { activeGenre.setValue(genre); loadBooks(); }
     public void clearFilter()               { activeGenre.setValue(""); loadBooks(); }
     public void setReadFilter(ReadFilter f){
         readFilter.setValue(f);
+        loadBooks();
+    }
+
+    public void setSortOrder(SortOrder s){
+        sortOrder.setValue(s);
         loadBooks();
     }
 }

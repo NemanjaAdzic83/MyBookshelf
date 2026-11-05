@@ -26,23 +26,31 @@ public class BooksByAuthorAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private final List<Object> items = new ArrayList<>();   // String = zaglavlje autora, Book = knjiga
     private final OnBookClickListener listener;
+    private boolean grouped = true;
 
     public BooksByAuthorAdapter(OnBookClickListener listener) { this.listener = listener; }
 
+    public void updateBooks(List<Book> books) { updateBooks(books, true); }
+
     /**
-     * [ISPRAVKA L23] Grupisanje po autoru je premješteno ovdje. Identična metoda groupByAuthor()
-     * je ranije bila kopirana u LibraryFragment i WishlistFragment.
+     * grouped = true : author headers + books (default sort).
+     * grouped = false: plain list in the given order, rows show the author name.
      */
-    public void updateBooks(List<Book> books) {
+    public void updateBooks(List<Book> books, boolean grouped) {
+        this.grouped = grouped;
         items.clear();
         if (books != null) {
-            Map<String, List<Book>> byAuthor = new LinkedHashMap<>();
-            for (Book b : books) {
-                byAuthor.computeIfAbsent(b.getAuthorLastFirst(), k -> new ArrayList<>()).add(b);
-            }
-            for (Map.Entry<String, List<Book>> e : byAuthor.entrySet()) {
-                items.add(e.getKey());
-                items.addAll(e.getValue());
+            if (grouped) {
+                Map<String, List<Book>> byAuthor = new LinkedHashMap<>();
+                for (Book b : books) {
+                    byAuthor.computeIfAbsent(b.getAuthorLastFirst(), k -> new ArrayList<>()).add(b);
+                }
+                for (Map.Entry<String, List<Book>> e : byAuthor.entrySet()) {
+                    items.add(e.getKey());
+                    items.addAll(e.getValue());
+                }
+            } else {
+                items.addAll(books);
             }
         }
         notifyDataSetChanged();
@@ -73,6 +81,13 @@ public class BooksByAuthorAdapter extends RecyclerView.Adapter<RecyclerView.View
         ItemBookListBinding v = ((BookVH) holder).binding;
 
         v.tvTitle.setText(book.getTitle());
+
+        if (grouped){
+            v.tvAuthor.setVisibility(View.GONE);
+        }else {
+            v.tvAuthor.setText(book.getFullAuthorName());
+            v.tvAuthor.setVisibility(View.VISIBLE);
+        }
 
         if (book.hasGenre()) {
             v.tvGenreBadge.setText(book.getGenre());

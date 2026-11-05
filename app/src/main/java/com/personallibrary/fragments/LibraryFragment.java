@@ -6,6 +6,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +32,7 @@ public class LibraryFragment extends Fragment {
     private FragmentLibraryBinding binding;
     private LibraryViewModel viewModel;
     private BooksByAuthorAdapter adapter;
+    private boolean scrollToTop = false;
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -54,7 +56,27 @@ public class LibraryFragment extends Fragment {
 
         viewModel.getBooks().observe(getViewLifecycleOwner(), books -> {
             binding.tvCountBadge.setText(String.valueOf(books != null ? books.size() : 0));
-            adapter.updateBooks(books);      // grupisanje po autoru je sada unutar adaptera
+            boolean grouped = viewModel.getSortOrder().getValue() == LibraryViewModel.SortOrder.AUTHOR;
+            adapter.updateBooks(books, grouped);
+            if (scrollToTop) {                       // new sort order -> start from the top
+                binding.recyclerView.scrollToPosition(0);
+                scrollToTop = false;
+            }
+        });
+
+        viewModel.getSortOrder().observe(getViewLifecycleOwner(), order ->
+                binding.tvSort.setText(getString(R.string.sort_label, getString(sortLabel(order)))));
+
+        binding.tvSort.setOnClickListener(v -> {
+            PopupMenu menu = new PopupMenu(requireContext(), v);
+            menu.getMenuInflater().inflate(R.menu.menu_sort, menu.getMenu());
+            menu.getMenu().findItem(sortMenuId(viewModel.getSortOrder().getValue())).setChecked(true);
+            menu.setOnMenuItemClickListener(item -> {
+                scrollToTop = true;
+                viewModel.setSortOrder(sortFromMenuId(item.getItemId()));
+                return true;
+            });
+            menu.show();
         });
 
         viewModel.getIsEmpty().observe(getViewLifecycleOwner(), empty -> {
@@ -62,6 +84,7 @@ public class LibraryFragment extends Fragment {
             binding.recyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
             boolean filtered = viewModel.getReadFilter().getValue() != LibraryViewModel.ReadFilter.ALL;
             binding.tvEmptyTitle.setText(filtered ? R.string.empty_filtered_books : R.string.empty_library_books);
+            binding.tvSort.setVisibility(empty ? View.GONE : View.VISIBLE);
         });
 
         viewModel.getGenres().observe(getViewLifecycleOwner(), this::rebuildChips);
@@ -73,11 +96,7 @@ public class LibraryFragment extends Fragment {
                 startActivity(new Intent(requireContext(), BarcodeScannerActivity.class)));
     }
 
-    /**
-     * [ISPRAVKA L2] Odabrani chip se uvijek računa iz stanja ViewModela (activeGenre).
-     * Ranije su se chipovi pri svakom osvježavanju liste (npr. povratak sa ekrana detalja)
-     * pravili ispočetka sa označenim "Sve", iako je lista i dalje bila filtrirana po žanru.
-     */
+
     private void rebuildChips(List<String> genres) {
         ChipGroup group = binding.chipGroupFilter;
         group.removeAllViews();
@@ -109,6 +128,27 @@ public class LibraryFragment extends Fragment {
                 v -> viewModel.setReadFilter(LibraryViewModel.ReadFilter.READ)));
         group.addView(makeChip(getString(R.string.filter_unread), current == LibraryViewModel.ReadFilter.UNREAD,
                 v -> viewModel.setReadFilter(LibraryViewModel.ReadFilter.UNREAD)));
+    }
+
+    private static int sortLabel(LibraryViewModel.SortOrder o) {
+        if (o == LibraryViewModel.SortOrder.TITLE)  return R.string.sort_title;
+        if (o == LibraryViewModel.SortOrder.NEWEST) return R.string.sort_newest;
+        if (o == LibraryViewModel.SortOrder.OLDEST) return R.string.sort_oldest;
+        return R.string.sort_author;
+    }
+
+    private static int sortMenuId(LibraryViewModel.SortOrder o) {
+        if (o == LibraryViewModel.SortOrder.TITLE)  return R.id.sort_title;
+        if (o == LibraryViewModel.SortOrder.NEWEST) return R.id.sort_newest;
+        if (o == LibraryViewModel.SortOrder.OLDEST) return R.id.sort_oldest;
+        return R.id.sort_author;
+    }
+
+    private static LibraryViewModel.SortOrder sortFromMenuId(int id) {
+        if (id == R.id.sort_title)  return LibraryViewModel.SortOrder.TITLE;
+        if (id == R.id.sort_newest) return LibraryViewModel.SortOrder.NEWEST;
+        if (id == R.id.sort_oldest) return LibraryViewModel.SortOrder.OLDEST;
+        return LibraryViewModel.SortOrder.AUTHOR;
     }
 
     private Chip makeChip(String text, boolean selected, View.OnClickListener onClick) {

@@ -149,4 +149,10 @@
     <string name="home_see_all">All</string>
     <string name="badge_read">Read</string>
 
+    <string name="sort_label">Sort: %1$s</string>
+    <string name="sort_author">Author</string>
+    <string name="sort_title">Title (A–Z)</string>
+    <string name="sort_newest">Newest first</string>
+    <string name="sort_oldest">Oldest first</string>
+
 </resources>
