@@ -155,4 +155,23 @@
     <string name="sort_newest">Newest first</string>
     <string name="sort_oldest">Oldest first</string>
 
+    <string name="bought">Bought</string>
+    <string name="bought_description">Mark \"%1$s\" as bought</string>
+    <string name="snackbar_bought">\"%1$s\" moved to your library</string>
+    <string name="snackbar_undo">Undo</string>
+
+    <string name="chip_in_library">In library</string>
+    <string name="chip_on_wishlist">On wishlist</string>
+    <string name="info_author">Author</string>
+    <string name="info_genre">Genre</string>
+    <string name="more_by_author">More by %1$s</string>
+    <plurals name="more_by_count">
+        <item quantity="one">%d book</item>
+        <item quantity="other">%d books</item>
+    </plurals>
+    <plurals name="you_have_by_author">
+        <item quantity="one">You already have %1$d book by %2$s in your library</item>
+        <item quantity="other">You already have %1$d books by %2$s in your library</item>
+    </plurals>
+
 </resources>

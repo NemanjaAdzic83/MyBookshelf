@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hero background: rounded bottom corners, same radius as the home header.
+     Solid colour is visible while the cover image is still loading. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:bottomLeftRadius="28dp" android:bottomRightRadius="28dp" />
+    <solid android:color="@color/primary_dark" />
+</shape>

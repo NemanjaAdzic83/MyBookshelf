@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.personallibrary.R;
 import com.personallibrary.activities.BookDetailActivity;
 import com.personallibrary.adapters.BooksByAuthorAdapter;
 import com.personallibrary.databinding.FragmentWishlistBinding;
@@ -42,6 +44,19 @@ public class WishlistFragment extends Fragment {
         });
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
+
+        adapter.setOnBoughtClickListener(book -> {
+            viewModel.moveToLibrary(book);
+
+            Snackbar bar = Snackbar.make(binding.getRoot(),
+                            getString(R.string.snackbar_bought, book.getTitle()), Snackbar.LENGTH_LONG)
+                    .setAction(R.string.snackbar_undo, v -> viewModel.moveBackToWishlist(book));
+
+            // The floating pill navigation is drawn over the fragment, so lift the snackbar above it
+            View nav = requireActivity().findViewById(R.id.bottom_navigation);
+            if (nav != null) bar.setAnchorView(nav);
+            bar.show();
+        });
 
         viewModel.getBooks().observe(getViewLifecycleOwner(), books -> {
             binding.tvCountBadge.setText(String.valueOf(books != null ? books.size() : 0));

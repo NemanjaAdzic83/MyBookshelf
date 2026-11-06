@@ -19,4 +19,11 @@
     <dimen name="fab_bottom_margin">80dp</dimen>
     <dimen name="fab_scan_bottom_margin">152dp</dimen>
     <dimen name="content_bottom_padding">88dp</dimen>
+    <!-- Book detail hero. The cover sticks out below the blurred background by
+     (cover_top + cover_height - hero_height) = 51dp; appbar_height adds a small gap under the cover. -->
+    <dimen name="detail_hero_height">250dp</dimen>
+    <dimen name="detail_cover_width">150dp</dimen>
+    <dimen name="detail_cover_height">225dp</dimen>
+    <dimen name="detail_cover_top">76dp</dimen>
+    <dimen name="detail_appbar_height">316dp</dimen>
 </resources>

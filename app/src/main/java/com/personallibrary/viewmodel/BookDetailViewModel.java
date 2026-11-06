@@ -6,14 +6,25 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.personallibrary.models.Book;
 import com.personallibrary.repository.BookRepository;
+import java.util.List;
 public class BookDetailViewModel extends AndroidViewModel {
     private final BookRepository repo;
     private final MutableLiveData<Book>    book      = new MutableLiveData<>();
     private final MutableLiveData<Boolean> opSuccess = new MutableLiveData<>();
+    // Other library books by the same author ("More by ..." row and wishlist banner)
+    private final MutableLiveData<List<Book>> moreByAuthor = new MutableLiveData<>();
     public BookDetailViewModel(@NonNull Application app) { super(app); repo = new BookRepository(app); }
-    public LiveData<Book>    getBook()      { return book; }
-    public LiveData<Boolean> getOpSuccess() { return opSuccess; }
-    public void loadBook(int id) { repo.getBookById(id, b -> book.setValue(b)); }
+    public LiveData<Book>    getBook()         { return book; }
+    public LiveData<Boolean> getOpSuccess()    { return opSuccess; }
+    public LiveData<List<Book>> getMoreByAuthor() { return moreByAuthor; }
+
+    public void loadBook(int id) {
+        repo.getBookById(id, b -> {
+            book.setValue(b);
+            if (b != null) repo.getOtherLibraryBooksByAuthor(b, moreByAuthor::setValue);
+        });
+    }
+
     public void moveToLibrary()  {
         Book b = book.getValue();
         if (b==null) return;

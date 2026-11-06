@@ -152,6 +152,22 @@ public class BookRepository {
         }, cb);
     }
 
+    /** Other LIBRARY books by the same author (first + last name, ignoring case), sorted by title. */
+    public void getOtherLibraryBooksByAuthor(Book book, Callback<List<Book>> cb) {
+        async(() -> {
+            List<Book> out = new ArrayList<>();
+            for (Book b : dao.getAllLibraryBooksSortedByAuthor()) {
+                if (b.getId() != book.getId()
+                        && sameText(b.getAuthorLastName(), book.getAuthorLastName())
+                        && sameText(b.getAuthorFirstName(), book.getAuthorFirstName())) {
+                    out.add(b);
+                }
+            }
+            Collections.sort(out, (a, c) -> COLLATOR.compare(nz(a.getTitle()), nz(c.getTitle())));
+            return out;
+        }, cb);
+    }
+
     // ---------- pisanje ----------
     public void addBook(Book book, Callback<Long> cb) {
         async(() -> {

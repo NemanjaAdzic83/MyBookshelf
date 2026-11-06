@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.personallibrary.R;
 import com.personallibrary.databinding.ItemAuthorHeaderBinding;
 import com.personallibrary.databinding.ItemBookListBinding;
 import com.personallibrary.models.Book;
@@ -23,6 +24,15 @@ public class BooksByAuthorAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final int TYPE_BOOK = 1;
 
     public interface OnBookClickListener { void onBookClick(Book book); }
+    public interface OnBoughtClickListener{
+        void onBought(Book book);
+    }
+
+    private OnBoughtClickListener boughtListener;
+    public void setOnBoughtClickListener(OnBoughtClickListener l){
+        this.boughtListener = l;
+        notifyDataSetChanged();
+    }
 
     private final List<Object> items = new ArrayList<>();   // String = zaglavlje autora, Book = knjiga
     private final OnBookClickListener listener;
@@ -97,6 +107,17 @@ public class BooksByAuthorAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
         v.tvWishlistBadge.setVisibility(book.isInWishlist() ? View.VISIBLE : View.GONE);
         v.ivReadStamp.setVisibility(book.isRead() ? View.VISIBLE : View.GONE);
+
+        if (boughtListener != null) {
+            v.ivChevron.setVisibility(View.GONE);
+            v.btnBought.setVisibility(View.VISIBLE);
+            v.btnBought.setContentDescription(
+                    holder.itemView.getContext().getString(R.string.bought_description, book.getTitle()));
+            v.btnBought.setOnClickListener(x -> boughtListener.onBought(book));
+        } else {
+            v.ivChevron.setVisibility(View.VISIBLE);
+            v.btnBought.setVisibility(View.GONE);
+        }
 
         CoverLoader.load(v.ivCover, book.getCoverImagePath(), book.getTitle());
         holder.itemView.setOnClickListener(x -> listener.onBookClick(book));

@@ -15,4 +15,14 @@ public class WishlistViewModel extends AndroidViewModel {
     public LiveData<List<Book>> getBooks()   { return books; }
     public LiveData<Boolean>    getIsEmpty() { return isEmpty; }
     public void loadBooks() { repo.getWishlistBooks(list -> { books.setValue(list); isEmpty.setValue(list.isEmpty()); }); }
+
+    // "Bought": wishlist -> library, then reload so the row disappears
+    public void moveToLibrary(Book book) {
+        repo.moveToLibrary(book.getId(), ok -> loadBooks());
+    }
+
+    // Undo of the above
+    public void moveBackToWishlist(Book book) {
+        repo.moveToWishlist(book.getId(), ok -> loadBooks());
+    }
 }
