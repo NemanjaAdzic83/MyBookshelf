@@ -8,6 +8,7 @@ import android.os.Looper;
 import com.personallibrary.database.AppDatabase;
 import com.personallibrary.database.BookDao;
 import com.personallibrary.models.Book;
+import com.personallibrary.utils.BookDates;
 import com.personallibrary.utils.CoverStorage;
 
 import java.text.Collator;
@@ -22,7 +23,9 @@ import java.util.function.Supplier;
 
 public class BookRepository {
 
-    public interface Callback<T> { void onResult(T result); }
+    public interface Callback<T> {
+        void onResult(T result);
+    }
 
     // [ISPRAVKA L10] Jedan zajednički executor i handler za SVE instance.
     // Ranije je svaki ViewModel pravio svoj Repository, a svaki Repository svoju nit
@@ -38,7 +41,9 @@ public class BookRepository {
         this.dao = AppDatabase.getInstance(app).bookDao();
     }
 
-    /** Izvršava posao u pozadini, a rezultat vraća na glavnu nit. Zamjenjuje 15 ponovljenih lambdi. */
+    /**
+     * Izvršava posao u pozadini, a rezultat vraća na glavnu nit. Zamjenjuje 15 ponovljenih lambdi.
+     */
     private <T> void async(Supplier<T> work, Callback<T> cb) {
         EXEC.execute(() -> {
             T result = work.get();
@@ -47,20 +52,40 @@ public class BookRepository {
     }
 
     // ---------- čitanje ----------
-    public void getRecentLibraryBooks(Callback<List<Book>> cb) { async(dao::getRecentLibraryBooks, cb); }
+    public void getRecentLibraryBooks(Callback<List<Book>> cb) {
+        async(dao::getRecentLibraryBooks, cb);
+    }
+
     public void getAllLibraryBooks(Callback<List<Book>> cb) {
         async(() -> sortByAuthor(dao.getAllLibraryBooksSortedByAuthor()), cb);
     }
+
     public void getLibraryBooksByGenre(String genre, Callback<List<Book>> cb) {
         async(() -> sortByAuthor(dao.getLibraryBooksByGenre(genre)), cb);
     }
-    public void getWishlistBooks(Callback<List<Book>> cb)      { async(dao::getWishlistBooks, cb); }
-    public void getAllGenres(Callback<List<String>> cb)        { async(dao::getAllGenres, cb); }
-    public void getBookById(int id, Callback<Book> cb)         { async(() -> dao.getBookById(id), cb); }
-    public void getLibraryCount(Callback<Integer> cb)          { async(dao::getLibraryCount, cb); }
-    public void getWishlistCount(Callback<Integer> cb)         { async(dao::getWishlistCount, cb); }
-    public void getReadCount(Callback<Integer> cb){
-        async(dao::getReadCount,cb);
+
+    public void getWishlistBooks(Callback<List<Book>> cb) {
+        async(dao::getWishlistBooks, cb);
+    }
+
+    public void getAllGenres(Callback<List<String>> cb) {
+        async(dao::getAllGenres, cb);
+    }
+
+    public void getBookById(int id, Callback<Book> cb) {
+        async(() -> dao.getBookById(id), cb);
+    }
+
+    public void getLibraryCount(Callback<Integer> cb) {
+        async(dao::getLibraryCount, cb);
+    }
+
+    public void getWishlistCount(Callback<Integer> cb) {
+        async(dao::getWishlistCount, cb);
+    }
+
+    public void getReadCount(Callback<Integer> cb) {
+        async(dao::getReadCount, cb);
     }
 
     // ---------- sorting ----------
@@ -69,7 +94,9 @@ public class BookRepository {
     // and works fine for plain English names too.
     private static final Collator COLLATOR = Collator.getInstance(new Locale("sr"));
 
-    private static String nz(String s) { return s == null ? "" : s; }
+    private static String nz(String s) {
+        return s == null ? "" : s;
+    }
 
     private static List<Book> sortByAuthor(List<Book> books) {
         List<Book> sorted = new ArrayList<>(books);
@@ -98,7 +125,9 @@ public class BookRepository {
         }, cb);
     }
 
-    /** "Čarobnjak" -> "carobnjak", "Andrić" -> "andric", "Đorđe" -> "dorde" (pretraga bez dijakritika). */
+    /**
+     * "Čarobnjak" -> "carobnjak", "Andrić" -> "andric", "Đorđe" -> "dorde" (pretraga bez dijakritika).
+     */
     static String normalizeForSearch(String s) {
         if (s == null) return "";
         String t = Normalizer.normalize(s.trim().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
@@ -142,7 +171,9 @@ public class BookRepository {
         }, cb);
     }
 
-    /** Isto kao findByTitleAndAuthor, ali preskače knjigu sa datim id-jem (potrebno pri izmjeni knjige). */
+    /**
+     * Isto kao findByTitleAndAuthor, ali preskače knjigu sa datim id-jem (potrebno pri izmjeni knjige).
+     */
     public void findOtherByTitleAndAuthor(String title, String lastName, int excludeId, Callback<Book> cb) {
         async(() -> {
             for (Book b : dao.getAllBooks()) {
@@ -152,7 +183,9 @@ public class BookRepository {
         }, cb);
     }
 
-    /** Other LIBRARY books by the same author (first + last name, ignoring case), sorted by title. */
+    /**
+     * Other LIBRARY books by the same author (first + last name, ignoring case), sorted by title.
+     */
     public void getOtherLibraryBooksByAuthor(Book book, Callback<List<Book>> cb) {
         async(() -> {
             List<Book> out = new ArrayList<>();
@@ -177,10 +210,15 @@ public class BookRepository {
     }
 
     public void updateBook(Book book, Callback<Void> cb) {
-        async(() -> { dao.updateBook(book); return null; }, cb);
+        async(() -> {
+            dao.updateBook(book);
+            return null;
+        }, cb);
     }
 
-    /** Snima izmijenjenu knjigu; ako je naslovnica zamijenjena ili uklonjena, briše staru lokalnu sliku. */
+    /**
+     * Snima izmijenjenu knjigu; ako je naslovnica zamijenjena ili uklonjena, briše staru lokalnu sliku.
+     */
     public void updateEditedBook(Book book, String previousCover, Callback<Boolean> cb) {
         async(() -> {
             dao.updateBook(book);
@@ -203,23 +241,37 @@ public class BookRepository {
     }
 
     public void moveToLibrary(int id, Callback<Boolean> cb) {
-        async(() -> { dao.moveToLibrary(id, System.currentTimeMillis());
-            return true; }, cb);
+        async(() -> {
+            dao.moveToLibrary(id, System.currentTimeMillis());
+            return true;
+        }, cb);
     }
 
-    public void moveToWishlist(int id, Callback<Boolean> cb){
-        async(() -> { dao.moveToWishlist(id, System.currentTimeMillis());
-            return true; }, cb);
+    public void moveToWishlist(int id, Callback<Boolean> cb) {
+        async(() -> {
+            dao.moveToWishlist(id, System.currentTimeMillis());
+            return true;
+        }, cb);
     }
 
-    /** Kopira odabranu sliku u privatni direktorij (ISPRAVKA K4). Rezultat: putanja ili null. */
+    /**
+     * Kopira odabranu sliku u privatni direktorij (ISPRAVKA K4). Rezultat: putanja ili null.
+     */
     public void saveCover(Uri source, Callback<String> cb) {
         async(() -> CoverStorage.copyToInternal(app, source), cb);
     }
 
-    public void setRead(int id, boolean read, Callback<Boolean> cb){
-        async(() -> {dao.setRead(id,read);
-        return true;
+    public void setRead(int id, boolean read, Callback<Boolean> cb) {
+        async(() -> {
+            dao.setRead(id, read, read ? BookDates.todayUtc() : 0L);
+            return true;
+        }, cb);
+    }
+
+    public void setReadDate(int id, long date, Callback<Boolean> cb){
+        async(() -> {
+            dao.setReadDate(id,date);
+            return true;
         }, cb);
     }
 }

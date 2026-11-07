@@ -174,4 +174,16 @@
         <item quantity="other">You already have %1$d books by %2$s in your library</item>
     </plurals>
 
+    <string name="add_book_section_details">MORE DETAILS (optional)</string>
+    <string name="publisher_hint">Publisher</string>
+    <string name="series_hint">Series</string>
+    <string name="purchase_date_hint">Purchase date</string>
+    <string name="pick_date">Pick a date</string>
+    <string name="clear_date">Clear date</string>
+    <string name="info_publisher">Publisher</string>
+    <string name="info_series">Series</string>
+    <string name="info_purchased">Purchased</string>
+    <string name="info_read_on">Read on</string>
+    <string name="info_tap_to_set">Tap to set</string>
+
 </resources>

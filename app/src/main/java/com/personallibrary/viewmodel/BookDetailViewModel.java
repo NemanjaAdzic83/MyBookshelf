@@ -45,4 +45,10 @@ public class BookDetailViewModel extends AndroidViewModel {
         if (b == null) return;
         repo.setRead(b.getId(), !b.isRead(), ok -> loadBook(b.getId()));
     }
+
+    public void setReadDate(long date){
+        Book b = book.getValue();
+        if (b == null) return;
+        repo.setReadDate(b.getId(),date, ok -> loadBook(b.getId()));
+    }
 }

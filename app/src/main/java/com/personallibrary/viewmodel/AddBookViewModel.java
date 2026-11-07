@@ -12,7 +12,9 @@ import com.personallibrary.models.Book;
 import com.personallibrary.repository.BookRepository;
 import com.personallibrary.utils.CoverStorage;
 
-/** Služi za dodavanje NOVE knjige i za IZMJENU postojeće (kada se pozove startEdit). */
+/**
+ * Služi za dodavanje NOVE knjige i za IZMJENU postojeće (kada se pozove startEdit).
+ */
 public class AddBookViewModel extends AndroidViewModel {
 
     public enum SaveResult {
@@ -26,6 +28,7 @@ public class AddBookViewModel extends AndroidViewModel {
     private final MutableLiveData<String> coverPath = new MutableLiveData<>();
     private final MutableLiveData<Boolean> busy = new MutableLiveData<>(false);
     private final MutableLiveData<Book> editBook = new MutableLiveData<>();
+    private final MutableLiveData<Long> purchaseDate = new MutableLiveData<>(0L);
 
     // Stanje forme živi u ViewModelu, pa preživljava rotaciju ekrana.
     private String genre = "";
@@ -41,22 +44,60 @@ public class AddBookViewModel extends AndroidViewModel {
         repo = new BookRepository(app);
     }
 
-    public LiveData<SaveResult> getSaveResult() { return saveResult; }
-    public LiveData<String> getCoverPath()       { return coverPath; }
-    public LiveData<Boolean> getBusy()           { return busy; }
-    public LiveData<Book> getEditBook()          { return editBook; }
-    public String getGenre()                     { return genre; }
-    public void setGenre(String g)               { genre = g == null ? "" : g; }
+    public LiveData<SaveResult> getSaveResult() {
+        return saveResult;
+    }
 
-    public void consumeSaveResult() { saveResult.setValue(null); }
-    /** Poziva se kad Activity prepiše podatke knjige u polja, da se to ne ponovi nakon rotacije. */
-    public void consumeEditBook()   { editBook.setValue(null); }
+    public LiveData<String> getCoverPath() {
+        return coverPath;
+    }
 
-    private boolean isBusy() { return Boolean.TRUE.equals(busy.getValue()); }
+    public LiveData<Boolean> getBusy() {
+        return busy;
+    }
+
+    public LiveData<Book> getEditBook() {
+        return editBook;
+    }
+
+    public LiveData<Long> getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(long d) {
+        purchaseDate.setValue(d);
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String g) {
+        genre = g == null ? "" : g;
+    }
+
+    public void consumeSaveResult() {
+        saveResult.setValue(null);
+    }
+
+    /**
+     * Poziva se kad Activity prepiše podatke knjige u polja, da se to ne ponovi nakon rotacije.
+     */
+    public void consumeEditBook() {
+        editBook.setValue(null);
+    }
+
+    private boolean isBusy() {
+        return Boolean.TRUE.equals(busy.getValue());
+    }
 
     private void publish(SaveResult r) {
         busy.setValue(false);
         saveResult.setValue(r);
+    }
+
+    private static String emptyToNull(String s) {
+        return s == null || s.trim().isEmpty() ? null : s.trim();
     }
 
     // ---------- izmjena: učitavanje ----------
@@ -67,10 +108,14 @@ public class AddBookViewModel extends AndroidViewModel {
         repo.getBookById(id, b -> {
             editLoading = false;
             busy.setValue(false);
-            if (b == null) { saveResult.setValue(SaveResult.ERROR_NOT_FOUND); return; }
+            if (b == null) {
+                saveResult.setValue(SaveResult.ERROR_NOT_FOUND);
+                return;
+            }
             editingBook = b;
             originalCover = b.getCoverImagePath();
             genre = b.getGenre() == null ? "" : b.getGenre();
+            purchaseDate.setValue(b.getPurchaseDate());
             coverPath.setValue(originalCover);
             editBook.setValue(b);
         });
@@ -82,7 +127,10 @@ public class AddBookViewModel extends AndroidViewModel {
         busy.setValue(true);
         repo.saveCover(uri, path -> {
             busy.setValue(false);
-            if (path == null) { saveResult.setValue(SaveResult.ERROR_COVER); return; }
+            if (path == null) {
+                saveResult.setValue(SaveResult.ERROR_COVER);
+                return;
+            }
             deleteTempCover();                 // zamjena: obriši prethodnu privremenu kopiju
             coverPath.setValue(path);
         });
@@ -93,7 +141,9 @@ public class AddBookViewModel extends AndroidViewModel {
         coverPath.setValue(null);
     }
 
-    /** Briše samo NOVO odabranu sliku koja još nije snimljena; originalna naslovnica knjige se ne dira. */
+    /**
+     * Briše samo NOVO odabranu sliku koja još nije snimljena; originalna naslovnica knjige se ne dira.
+     */
     private void deleteTempCover() {
         String current = coverPath.getValue();
         if (current != null && !current.equals(originalCover)) {
@@ -107,15 +157,22 @@ public class AddBookViewModel extends AndroidViewModel {
     }
 
     // ---------- snimanje nove knjige ----------
-    public void saveBook(String title, String firstName, String lastName, boolean toWishlist) {
+    public void saveBook(String title, String firstName, String lastName, String publisher,
+                         String series, boolean toWishlist) {
         if (isBusy()) return;
         busy.setValue(true);
 
         repo.bookExistsInLibrary(title, lastName, inLib -> {
-            if (inLib) { publish(SaveResult.ERROR_EXISTS_LIBRARY); return; }
+            if (inLib) {
+                publish(SaveResult.ERROR_EXISTS_LIBRARY);
+                return;
+            }
 
             repo.bookExistsAnywhere(title, lastName, anywhere -> {
-                if (anywhere) { publish(SaveResult.ERROR_EXISTS_WISHLIST); return; }
+                if (anywhere) {
+                    publish(SaveResult.ERROR_EXISTS_WISHLIST);
+                    return;
+                }
 
                 Book book = new Book();
                 book.setTitle(title);
@@ -123,6 +180,10 @@ public class AddBookViewModel extends AndroidViewModel {
                 book.setAuthorLastName(lastName);
                 book.setCoverImagePath(coverPath.getValue());
                 book.setGenre(genre);
+                book.setPublisher(emptyToNull(publisher));
+                book.setSeries(emptyToNull(series));
+                Long pd = purchaseDate.getValue();
+                book.setPurchaseDate(pd == null ? 0L : pd);
                 book.setInWishlist(toWishlist);
 
                 repo.addBook(book, id -> {
@@ -138,7 +199,7 @@ public class AddBookViewModel extends AndroidViewModel {
     }
 
     // ---------- snimanje izmjene ----------
-    public void saveEdit(String title, String firstName, String lastName) {
+    public void saveEdit(String title, String firstName, String lastName, String publisher, String series) {
         if (isBusy() || editingBook == null) return;
         busy.setValue(true);
 
@@ -153,11 +214,17 @@ public class AddBookViewModel extends AndroidViewModel {
             editingBook.setAuthorFirstName(firstName);
             editingBook.setAuthorLastName(lastName);
             editingBook.setGenre(genre);
+            editingBook.setPublisher(emptyToNull(publisher));
+            editingBook.setSeries(emptyToNull(series));
+            Long pd = purchaseDate.getValue();
+            editingBook.setPurchaseDate(pd == null ? 0L : pd);
             editingBook.setCoverImagePath(coverPath.getValue());
 
             repo.updateEditedBook(editingBook, originalCover, ok -> {
-                if (ok != null && ok) { saved = true; publish(SaveResult.SUCCESS_UPDATED); }
-                else publish(SaveResult.ERROR_SAVE);
+                if (ok != null && ok) {
+                    saved = true;
+                    publish(SaveResult.SUCCESS_UPDATED);
+                } else publish(SaveResult.ERROR_SAVE);
             });
         });
     }

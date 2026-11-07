@@ -23,7 +23,7 @@ import java.util.List;
  * Korisnici koji imaju v2 bazu zadržavaju sve podatke osim
  * kolone rating koja se briše bez gubitka knjiga.
  */
-@Database(entities = {Book.class}, version = 4, exportSchema = false)
+@Database(entities = {Book.class}, version = 5, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase instance;
@@ -88,6 +88,20 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    /*
+        v4 -> v5 : publisher, series, purchase date and read date
+        Existing books keep all data: texts are null, dates are 0 (not set)
+     */
+    static final Migration MIGRATION_4_5 = new Migration(4,5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE books ADD COLUMN publisher TEXT");
+            db.execSQL("ALTER TABLE books ADD COLUMN series TEXT");
+            db.execSQL("ALTER TABLE books ADD COLUMN purchase_date INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE books ADD COLUMN read_date INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
     // Earlier versions stored genre names in Serbian (Latin and Cyrillic). Same order as GenreConstants.ALL_GENRES.
     private static final String[] OLD_LATIN_GENRES = {
         "Roman", "Naučna fantastika", "Fantazija", "Misterija / Triler",
@@ -119,7 +133,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             ctx.getApplicationContext(),
                             AppDatabase.class,
                             "personal_library.db")
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3,MIGRATION_3_4)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3,MIGRATION_3_4,MIGRATION_4_5)
                             .addCallback(new RoomDatabase.Callback() {
                                 @Override public void onOpen(@NonNull SupportSQLiteDatabase db) {
                                     super.onOpen(db);

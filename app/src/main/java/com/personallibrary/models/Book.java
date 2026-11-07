@@ -40,30 +40,124 @@ public class Book {
     @ColumnInfo(name = "is_read", defaultValue = "0")
     private boolean read;
 
-    public Book() {}
+    @ColumnInfo(name = "publisher")
+    private String publisher;
 
-    public int getId()                         { return id; }
-    public void setId(int id)                  { this.id = id; }
-    public String getTitle()                   { return title; }
-    public void setTitle(String t)             { title = t; }
-    public String getAuthorFirstName()         { return authorFirstName; }
-    public void setAuthorFirstName(String n)   { authorFirstName = n; }
-    public String getAuthorLastName()          { return authorLastName; }
-    public void setAuthorLastName(String n)    { authorLastName = n; }
-    public String getCoverImagePath()          { return coverImagePath; }
-    public void setCoverImagePath(String p)    { coverImagePath = p; }
-    public boolean isInWishlist()              { return inWishlist; }
-    public void setInWishlist(boolean w)       { inWishlist = w; }
-    public long getDateAdded()                 { return dateAdded; }
-    public void setDateAdded(long d)           { dateAdded = d; }
-    public String getGenre()                   { return genre; }
-    public void setGenre(String g)             { genre = g; }
+    @ColumnInfo(name = "series")
+    private String series;
+
+    @ColumnInfo(name = "purchase_date", defaultValue = "0")
+    private long purchaseDate;
+
+    @ColumnInfo(name = "read_date", defaultValue = "0")
+    private long readDate;
+
+
+    public Book() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String t) {
+        title = t;
+    }
+
+    public String getAuthorFirstName() {
+        return authorFirstName;
+    }
+
+    public void setAuthorFirstName(String n) {
+        authorFirstName = n;
+    }
+
+    public String getAuthorLastName() {
+        return authorLastName;
+    }
+
+    public void setAuthorLastName(String n) {
+        authorLastName = n;
+    }
+
+    public String getCoverImagePath() {
+        return coverImagePath;
+    }
+
+    public void setCoverImagePath(String p) {
+        coverImagePath = p;
+    }
+
+    public boolean isInWishlist() {
+        return inWishlist;
+    }
+
+    public void setInWishlist(boolean w) {
+        inWishlist = w;
+    }
+
+    public long getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(long d) {
+        dateAdded = d;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String g) {
+        genre = g;
+    }
+
     public boolean isRead() {
         return read;
     }
 
     public void setRead(boolean read) {
         this.read = read;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getSeries() {
+        return series;
+    }
+
+    public void setSeries(String series) {
+        this.series = series;
+    }
+
+    public long getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(long purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
+    public long getReadDate() {
+        return readDate;
+    }
+
+    public void setReadDate(long readDate) {
+        this.readDate = readDate;
     }
 
     public String getFullAuthorName() {
@@ -78,5 +172,7 @@ public class Book {
         return authorLastName + ", " + authorFirstName;
     }
 
-    public boolean hasGenre() { return genre != null && !genre.isEmpty(); }
+    public boolean hasGenre() {
+        return genre != null && !genre.isEmpty();
+    }
 }

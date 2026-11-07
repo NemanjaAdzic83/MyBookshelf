@@ -1,10 +1,12 @@
 package com.personallibrary.activities;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,11 +19,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.personallibrary.R;
 import com.personallibrary.adapters.MoreByAuthorAdapter;
 import com.personallibrary.databinding.ActivityBookDetailBinding;
 import com.personallibrary.databinding.ItemInfoRowBinding;
 import com.personallibrary.models.Book;
+import com.personallibrary.utils.BookDates;
 import com.personallibrary.utils.CoverLoader;
 import com.personallibrary.viewmodel.BookDetailViewModel;
 
@@ -141,11 +145,22 @@ public class BookDetailActivity extends AppCompatActivity {
             binding.tvGenreBadge.setVisibility(View.GONE);
         }
 
-        // Info table. New fields (publisher, series, purchase date, read date) are added here later
-        // with one addInfoRow(...) call each.
         binding.infoContainer.removeAllViews();
         addInfoRow(getString(R.string.info_author), book.getFullAuthorName());
         if (book.hasGenre()) addInfoRow(getString(R.string.info_genre), book.getGenre());
+        if (!TextUtils.isEmpty(book.getPublisher()))
+            addInfoRow(getString(R.string.info_publisher), book.getPublisher());
+        if (!TextUtils.isEmpty(book.getSeries()))
+            addInfoRow(getString(R.string.info_series), book.getSeries());
+        if (book.getPurchaseDate() > 0)
+            addInfoRow(getString(R.string.info_purchased), BookDates.format(book.getPurchaseDate()));
+// Read books only. Tapping the row lets the user correct the date.
+        if (!book.isInWishlist() && book.isRead()) {
+            String when = book.getReadDate() > 0
+                    ? BookDates.format(book.getReadDate())
+                    : getString(R.string.info_tap_to_set);
+            addInfoRow(getString(R.string.info_read_on), when, () -> pickReadDate(book));
+        }
 
         CoverLoader.load(binding.ivCover, book.getCoverImagePath(), book.getTitle());
         CoverLoader.loadBackground(binding.ivCoverBg, book.getCoverImagePath(), book.getTitle());
@@ -196,12 +211,37 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     private void addInfoRow(String label, String value) {
+        addInfoRow(label, value, null);
+    }
+
+    /** onClick != null makes the row tappable (value in the accent colour with a small calendar icon). */
+    private void addInfoRow(String label, String value, Runnable onClick) {
         ItemInfoRowBinding row = ItemInfoRowBinding.inflate(getLayoutInflater(), binding.infoContainer, false);
         row.tvLabel.setText(label);
         row.tvValue.setText(value);
         // no divider above the first row
         if (binding.infoContainer.getChildCount() == 0) row.vDivider.setVisibility(View.GONE);
+
+        if (onClick != null) {
+            row.tvValue.setTextColor(ContextCompat.getColor(this, R.color.primary));
+            row.tvValue.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_calendar, 0, 0, 0);
+            row.tvValue.setCompoundDrawablePadding(
+                    (int) (6 * getResources().getDisplayMetrics().density));
+            row.tvValue.setCompoundDrawableTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.primary)));
+            row.getRoot().setOnClickListener(v -> onClick.run());
+        }
         binding.infoContainer.addView(row.getRoot());
+    }
+
+    private void pickReadDate(Book book) {
+        long selection = book.getReadDate() > 0 ? book.getReadDate() : BookDates.todayUtc();
+        MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText(R.string.info_read_on)
+                .setSelection(selection)
+                .build();
+        picker.addOnPositiveButtonClickListener(selected -> viewModel.setReadDate(selected));
+        picker.show(getSupportFragmentManager(), "read_date");
     }
 
     private void showDeleteDialog(Book book) {

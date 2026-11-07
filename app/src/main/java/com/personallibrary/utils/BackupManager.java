@@ -54,7 +54,7 @@ import java.util.zip.ZipOutputStream;
 public final class BackupManager {
 
     private static final String FORMAT = "MyBookshelfBackup";
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
     private static final String JSON_ENTRY = "books.json";
     private static final String COVER_PREFIX = "covers/";
     private static final String COVER_DIR = "covers";   // same folder as CoverStorage
@@ -126,6 +126,10 @@ public final class BackupManager {
             o.put("inWishlist", b.isInWishlist());
             o.put("read", b.isRead());
             o.put("dateAdded", b.getDateAdded());
+            if (b.getPublisher() != null && !b.getPublisher().isEmpty()) o.put("publisher", b.getPublisher());
+            if (b.getSeries() != null && !b.getSeries().isEmpty()) o.put("series", b.getSeries());
+            if (b.getPurchaseDate() > 0) o.put("purchaseDate", b.getPurchaseDate());
+            if (b.getReadDate() > 0) o.put("readDate", b.getReadDate());
 
             String cover = b.getCoverImagePath();
             File local = localCover(ctx, cover);
@@ -252,6 +256,10 @@ public final class BackupManager {
                     boolean wish = o.optBoolean("inWishlist", false);
                     b.setInWishlist(wish);
                     b.setRead(!wish && o.optBoolean("read", false));
+                    b.setPublisher(o.has("publisher") ? o.optString("publisher") : null);
+                    b.setSeries(o.has("series") ? o.optString("series") : null);
+                    b.setPurchaseDate(o.optLong("purchaseDate", 0L));
+                    b.setReadDate(b.isRead() ? o.optLong("readDate", 0L) : 0L);
                     b.setDateAdded(o.optLong("dateAdded", System.currentTimeMillis()));
 
                     String coverFile = o.optString("coverFile", "");

@@ -13,8 +13,10 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.chip.Chip;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.personallibrary.R;
 import com.personallibrary.databinding.ActivityAddBookBinding;
+import com.personallibrary.utils.BookDates;
 import com.personallibrary.utils.CoverLoader;
 import com.personallibrary.utils.GenreConstants;
 import com.personallibrary.viewmodel.AddBookViewModel;
@@ -54,6 +56,17 @@ public class AddBookActivity extends AppCompatActivity {
 
         buildGenreChips();
 
+        // Purchase date: tap the field (or the calendar icon) to pick , tap the clear icon to remove
+        binding.etPurchaseDate.setOnClickListener( v -> pickPurchaseDate());
+        binding.tilPurchaseDate.setEndIconOnClickListener( v -> {
+            Long cur = viewModel.getPurchaseDate().getValue();
+            if (cur != null && cur > 0){
+                viewModel.setPurchaseDate(0L);
+            }else {
+                pickPurchaseDate();
+            }
+        });
+
         binding.btnSaveLibrary.setOnClickListener(v -> attemptSave(false));
         binding.btnSaveWishlist.setOnClickListener(v -> attemptSave(true));
 
@@ -67,6 +80,17 @@ public class AddBookActivity extends AppCompatActivity {
         }
 
         observeViewModel();
+    }
+
+    private void pickPurchaseDate() {
+        Long cur = viewModel.getPurchaseDate().getValue();
+        long selection = (cur != null && cur > 0) ? cur : BookDates.todayUtc();
+        MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText(R.string.purchase_date_hint)
+                .setSelection(selection)
+                .build();
+        picker.addOnPositiveButtonClickListener(selected -> viewModel.setPurchaseDate(selected));
+        picker.show(getSupportFragmentManager(), "purchase_date");
     }
 
     private void buildGenreChips() {
@@ -105,8 +129,18 @@ public class AddBookActivity extends AppCompatActivity {
             binding.etTitle.setText(book.getTitle());
             binding.etAuthorFirst.setText(book.getAuthorFirstName());
             binding.etAuthorLast.setText(book.getAuthorLastName());
+            binding.etPublisher.setText(book.getPublisher());
+            binding.etSeries.setText(book.getSeries());
             refreshGenreChips();
             viewModel.consumeEditBook();   // bez ponovnog prepisivanja nakon rotacije (da se ne izgube unesene izmjene)
+        });
+
+        viewModel.getPurchaseDate().observe(this, d -> {
+            boolean has = d != null && d > 0;
+            binding.etPurchaseDate.setText(has ? BookDates.format(d) : "");
+            binding.tilPurchaseDate.setEndIconDrawable(has ? R.drawable.ic_clear : R.drawable.ic_calendar);
+            binding.tilPurchaseDate.setEndIconContentDescription(
+                    getString(has ? R.string.clear_date : R.string.pick_date));
         });
 
         viewModel.getCoverPath().observe(this, path -> {
@@ -169,6 +203,8 @@ public class AddBookActivity extends AppCompatActivity {
         String title     = capitalizeFirst(txt(binding.etTitle));
         String firstName = capitalizeWords(txt(binding.etAuthorFirst));
         String lastName  = capitalizeWords(txt(binding.etAuthorLast));
+        String publisher = txt(binding.etPublisher);
+        String series = txt(binding.etSeries);
 
         if (TextUtils.isEmpty(title)) {
             binding.tilTitle.setError(getString(R.string.error_title_required));
@@ -181,8 +217,8 @@ public class AddBookActivity extends AppCompatActivity {
             return;
         }
 
-        if (isEditMode()) viewModel.saveEdit(title, firstName, lastName);
-        else viewModel.saveBook(title, firstName, lastName, toWishlist);
+        if (isEditMode()) viewModel.saveEdit(title, firstName, lastName, publisher, series);
+        else viewModel.saveBook(title, firstName, lastName, publisher, series, toWishlist);
     }
 
     private String txt(EditText et) {
