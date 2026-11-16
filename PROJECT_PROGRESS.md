@@ -13,14 +13,17 @@ Posljednje ažuriranje: 2026-11-16
 
 - 4.3 – README: nove funkcije, "Known limitations" bez "No backup/export", sekcija "Data and covers", JDK 17 or newer
 
+- 4.4 – Gradle wrapper 8.2 (`gradlew`, `gradlew.bat`, `gradle-wrapper.jar`), `assembleDebug` prolazi iz terminala
+- **Faza 4 završena** (osim `git push`, čeka odobrenje)
+
 ## Trenutni zadatak
 
-**4.4 – Gradle wrapper**
-Dodati `gradlew`, `gradlew.bat` i `gradle-wrapper.jar` (trenutno postoji samo `gradle-wrapper.properties`).
+Nema – dogovoriti redoslijed faza 5 i 6.
 
 ## Naredni koraci
 
-1. Dogovoriti redoslijed faza 5 i 6
+1. Push na GitHub (kad odobriš)
+2. Dogovoriti redoslijed faza 5 i 6
 
 ## Napomene
 

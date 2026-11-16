@@ -63,7 +63,7 @@ Navigacija između glavnih ekrana: `MainActivity.load()` radi `replace` fragment
 ## Pokretanje
 
 Otvoriti projekat u Android Studiju, sačekati Gradle Sync, pokrenuti na uređaju/emulatoru API 24+.
-Iz terminala: `./gradlew assembleDebug` – **radi tek nakon zadatka 4.4** (wrapper skripte još ne postoje).
+Iz terminala: `./gradlew assembleDebug` (na Windowsu `.\gradlew.bat assembleDebug`, uz `JAVA_HOME=D:\Android Studio\jbr`).
 
 ## Testovi
 
