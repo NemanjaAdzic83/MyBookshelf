@@ -23,14 +23,23 @@ add them by scanning the barcode, and browse your collection by author or genre.
 
 ## Features
 
-- **Library and wishlist** – two separate lists, with one tap to move a book from the wishlist to the library
-- **Barcode / QR scanning** – scan an ISBN and the book's title, author, publisher and cover are filled in automatically
+- **Library and wishlist** – two separate lists; one tap on **Bought** moves a book from the wishlist to the library
+- **Home dashboard** – number of books, percentage read, wishlist count and recently added books
+- **Barcode / QR scanning** – scan an ISBN and the title, author, publisher and cover are filled in automatically
 - **Two lookup sources** – Google Books first, Open Library as an automatic fallback (no API key required)
-- **Manual entry** – for books no database knows; optional cover picked from the gallery
-- **Edit a book** – fix the title, author, genre or cover from the pencil icon on the details screen
+- **Manual entry** – for books no database knows; optional cover picked from the gallery.
+  Books without a cover get a generated one with the title and author
+- **Book details** – large cover, publisher, series, purchase date, read date and other books by the same author
+- **Edit a book** – fix any field or change the cover from the pencil icon on the details screen
+- **Read tracking** – mark books as read (with the date) and filter the library by read / unread
 - **Search** – by title or author, ignoring diacritics (`andric` finds `Andrić`)
-- **Genre filter** – library grouped by author, sorted alphabetically (also correct for Serbian letters)
-- **Offline-first** – everything is stored locally in a Room (SQLite) database; internet is only needed for ISBN lookup
+- **Genre filter and sorting** – group by author or sort by title, newest or oldest
+  (alphabetical order is also correct for Serbian letters)
+- **Duplicate check** – a book with the same title and author is not added twice
+- **Backup and restore** – export the whole library with covers to a ZIP file and import it on another phone.
+  Import only adds books; it never deletes or overwrites existing ones
+- **Offline-first** – everything is stored locally in a Room (SQLite) database;
+  internet is only needed for ISBN lookup and web covers
 
 ## Tech stack
 
@@ -42,7 +51,7 @@ Glide · OkHttp · ZXing (`zxing-android-embedded`)
 
 ## Getting started
 
-Requirements: Android Studio (Hedgehog or newer), JDK 17 (bundled with Android Studio), Android SDK 34.
+Requirements: Android Studio (Hedgehog or newer), JDK 17 or newer (bundled with Android Studio), Android SDK 34.
 
 1. Clone the repository and open the folder in Android Studio (**File > Open**).
 2. Wait for **Gradle Sync** to finish.
@@ -65,10 +74,16 @@ See `local.properties.example`.
 
 ## Known limitations
 
-- Book data for some regional publishers is missing in free databases; use manual entry (the scanner offers a web search shortcut).
+- Book data for some regional publishers is missing in free databases; use manual entry
+  (the scanner offers a web search shortcut).
 - Search does not match Cyrillic and Latin spellings of the same name.
-- The ISBN is not stored with the book yet.
-- No backup/export of the library yet.
+- The ISBN is not stored with the book yet, so scanning the same book twice is only caught by title and author.
+
+## Data and covers
+
+Book data and cover images come from [Google Books](https://books.google.com) and
+[Open Library](https://openlibrary.org). The covers shown in the screenshots were loaded from Open Library;
+all rights to cover artwork belong to their respective publishers and artists.
 
 ## License
 

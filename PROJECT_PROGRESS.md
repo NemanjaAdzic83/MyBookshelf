@@ -9,16 +9,18 @@ Posljednje ažuriranje: 2026-11-16
 - Napravljeni `CLAUDE.md`, `PROJECT_PLAN.md`, `PROJECT_PROGRESS.md`
 - 4.1 – Tamne ikonice statusne i navigacione trake (commit `cbc470c`), provjereno na emulatoru
 
+- 4.2 – Screenshotovi u `docs/screenshots/` i sekcija "Screenshots" u README-u (commit `5eb720d`)
+
+- 4.3 – README: nove funkcije, "Known limitations" bez "No backup/export", sekcija "Data and covers", JDK 17 or newer
+
 ## Trenutni zadatak
 
-**4.2 – Demo podaci i screenshotovi**
-Importovati `demo-backup.zip`, napraviti screenshotove, sačuvati u `docs/screenshots/`.
+**4.4 – Gradle wrapper**
+Dodati `gradlew`, `gradlew.bat` i `gradle-wrapper.jar` (trenutno postoji samo `gradle-wrapper.properties`).
 
 ## Naredni koraci
 
-1. 4.3 – ažurirati `README.md` (slike, nove funkcije, izvor naslovnica: Open Library)
-2. 4.4 – dodati Gradle wrapper (trenutno postoji samo `gradle-wrapper.properties`)
-3. Dogovoriti redoslijed faza 5 i 6
+1. Dogovoriti redoslijed faza 5 i 6
 
 ## Napomene
 
