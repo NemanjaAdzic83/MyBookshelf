@@ -6,6 +6,21 @@ add them by scanning the barcode, and browse your collection by author or genre.
 > The interface is in **English**. All user-facing text lives in `app/src/main/res/values/strings.xml`
 > (plus the genre names in `GenreConstants.java`), so adding another language is a small job.
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/home_screen.png" width="250" alt="Home screen"><br>Home</td>
+    <td align="center"><img src="docs/screenshots/all_books_screen.png" width="250" alt="All books screen"><br>All books</td>
+    <td align="center"><img src="docs/screenshots/wishlist_screen.png" width="250" alt="Wishlist screen"><br>Wishlist</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/detail_screen.png" width="250" alt="Book details screen"><br>Book details</td>
+    <td align="center"><img src="docs/screenshots/add_book_screen.png" width="250" alt="Add book screen"><br>Add book</td>
+    <td align="center"><img src="docs/screenshots/edit_book_screen.png" width="250" alt="Edit book screen"><br>Edit book</td>
+  </tr>
+</table>
+
 ## Features
 
 - **Library and wishlist** – two separate lists, with one tap to move a book from the wishlist to the library
